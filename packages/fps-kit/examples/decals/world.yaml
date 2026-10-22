@@ -1,0 +1,589 @@
+# Copy this folder to levels/room in an FPS starter after importing fps-kit.
+# Metres; player spawn (2, 2, 1.7); all 36 glyphs on the north wall.
+# Fixed sprites are visual markers: goals and interaction stay in game code.
+version: 11
+uv: { mode: wrap, scale: { x: 1, y: 1 } }
+lighting:
+  version: 1
+  actors: true
+  ambient: { x: 0.7, y: 0.7, z: 0.7 }
+rooms:
+  - id: room
+    floor: { c: 0 }
+    ceiling: { c: 5 }
+    floor_material: fps-kit.floor-gray-grid
+    ceiling_material: fps-kit.ceiling-dark-panel
+    boundary:
+      - {
+          id: south,
+          start: { x: 0, y: 0 },
+          end: { x: 14, y: 0 },
+          material: fps-kit.wall-white-grid,
+        }
+      - {
+          id: east,
+          start: { x: 14, y: 0 },
+          end: { x: 14, y: 14 },
+          material: fps-kit.wall-white-grid,
+        }
+      - {
+          id: north,
+          start: { x: 14, y: 14 },
+          end: { x: 0, y: 14 },
+          material: fps-kit.wall-white-grid,
+        }
+      - {
+          id: west,
+          start: { x: 0, y: 14 },
+          end: { x: 0, y: 0 },
+          material: fps-kit.wall-white-grid,
+        }
+    contents:
+      - id: decal-shape-cross
+        kind: prop
+        position: { x: 1.5, y: 13.98, z: 0.6 }
+        actor:
+          sprite:
+            {
+              texture: fps-kit.decal-shape-cross,
+              facing: fixed,
+              alpha: cutout,
+              width: 0.6,
+              height: 0.6,
+              origin_x: 0.5,
+              origin_y: 0.5,
+            }
+      - id: decal-shape-triangle
+        kind: prop
+        position: { x: 3.7, y: 13.98, z: 0.6 }
+        actor:
+          sprite:
+            {
+              texture: fps-kit.decal-shape-triangle,
+              facing: fixed,
+              alpha: cutout,
+              width: 0.6,
+              height: 0.6,
+              origin_x: 0.5,
+              origin_y: 0.5,
+            }
+      - id: decal-shape-circle
+        kind: prop
+        position: { x: 5.9, y: 13.98, z: 0.6 }
+        actor:
+          sprite:
+            {
+              texture: fps-kit.decal-shape-circle,
+              facing: fixed,
+              alpha: cutout,
+              width: 0.6,
+              height: 0.6,
+              origin_x: 0.5,
+              origin_y: 0.5,
+            }
+      - id: decal-shape-square
+        kind: prop
+        position: { x: 8.1, y: 13.98, z: 0.6 }
+        actor:
+          sprite:
+            {
+              texture: fps-kit.decal-shape-square,
+              facing: fixed,
+              alpha: cutout,
+              width: 0.6,
+              height: 0.6,
+              origin_x: 0.5,
+              origin_y: 0.5,
+            }
+      - id: decal-number-0
+        kind: prop
+        position: { x: 10.3, y: 13.98, z: 0.6 }
+        actor:
+          sprite:
+            {
+              texture: fps-kit.decal-number-0,
+              facing: fixed,
+              alpha: cutout,
+              width: 0.6,
+              height: 0.6,
+              origin_x: 0.5,
+              origin_y: 0.5,
+            }
+      - id: decal-number-1
+        kind: prop
+        position: { x: 12.5, y: 13.98, z: 0.6 }
+        actor:
+          sprite:
+            {
+              texture: fps-kit.decal-number-1,
+              facing: fixed,
+              alpha: cutout,
+              width: 0.6,
+              height: 0.6,
+              origin_x: 0.5,
+              origin_y: 0.5,
+            }
+      - id: decal-number-2
+        kind: prop
+        position: { x: 1.5, y: 13.98, z: 1.3 }
+        actor:
+          sprite:
+            {
+              texture: fps-kit.decal-number-2,
+              facing: fixed,
+              alpha: cutout,
+              width: 0.6,
+              height: 0.6,
+              origin_x: 0.5,
+              origin_y: 0.5,
+            }
+      - id: decal-number-3
+        kind: prop
+        position: { x: 3.7, y: 13.98, z: 1.3 }
+        actor:
+          sprite:
+            {
+              texture: fps-kit.decal-number-3,
+              facing: fixed,
+              alpha: cutout,
+              width: 0.6,
+              height: 0.6,
+              origin_x: 0.5,
+              origin_y: 0.5,
+            }
+      - id: decal-number-4
+        kind: prop
+        position: { x: 5.9, y: 13.98, z: 1.3 }
+        actor:
+          sprite:
+            {
+              texture: fps-kit.decal-number-4,
+              facing: fixed,
+              alpha: cutout,
+              width: 0.6,
+              height: 0.6,
+              origin_x: 0.5,
+              origin_y: 0.5,
+            }
+      - id: decal-number-5
+        kind: prop
+        position: { x: 8.1, y: 13.98, z: 1.3 }
+        actor:
+          sprite:
+            {
+              texture: fps-kit.decal-number-5,
+              facing: fixed,
+              alpha: cutout,
+              width: 0.6,
+              height: 0.6,
+              origin_x: 0.5,
+              origin_y: 0.5,
+            }
+      - id: decal-number-6
+        kind: prop
+        position: { x: 10.3, y: 13.98, z: 1.3 }
+        actor:
+          sprite:
+            {
+              texture: fps-kit.decal-number-6,
+              facing: fixed,
+              alpha: cutout,
+              width: 0.6,
+              height: 0.6,
+              origin_x: 0.5,
+              origin_y: 0.5,
+            }
+      - id: decal-number-7
+        kind: prop
+        position: { x: 12.5, y: 13.98, z: 1.3 }
+        actor:
+          sprite:
+            {
+              texture: fps-kit.decal-number-7,
+              facing: fixed,
+              alpha: cutout,
+              width: 0.6,
+              height: 0.6,
+              origin_x: 0.5,
+              origin_y: 0.5,
+            }
+      - id: decal-number-8
+        kind: prop
+        position: { x: 1.5, y: 13.98, z: 2.0 }
+        actor:
+          sprite:
+            {
+              texture: fps-kit.decal-number-8,
+              facing: fixed,
+              alpha: cutout,
+              width: 0.6,
+              height: 0.6,
+              origin_x: 0.5,
+              origin_y: 0.5,
+            }
+      - id: decal-number-9
+        kind: prop
+        position: { x: 3.7, y: 13.98, z: 2.0 }
+        actor:
+          sprite:
+            {
+              texture: fps-kit.decal-number-9,
+              facing: fixed,
+              alpha: cutout,
+              width: 0.6,
+              height: 0.6,
+              origin_x: 0.5,
+              origin_y: 0.5,
+            }
+      - id: decal-feedback-nice
+        kind: prop
+        position: { x: 5.9, y: 13.98, z: 2.0 }
+        actor:
+          sprite:
+            {
+              texture: fps-kit.decal-feedback-nice,
+              facing: fixed,
+              alpha: cutout,
+              width: 0.6,
+              height: 0.6,
+              origin_x: 0.5,
+              origin_y: 0.5,
+            }
+      - id: decal-feedback-great
+        kind: prop
+        position: { x: 8.1, y: 13.98, z: 2.0 }
+        actor:
+          sprite:
+            {
+              texture: fps-kit.decal-feedback-great,
+              facing: fixed,
+              alpha: cutout,
+              width: 0.6,
+              height: 0.6,
+              origin_x: 0.5,
+              origin_y: 0.5,
+            }
+      - id: decal-feedback-ok
+        kind: prop
+        position: { x: 10.3, y: 13.98, z: 2.0 }
+        actor:
+          sprite:
+            {
+              texture: fps-kit.decal-feedback-ok,
+              facing: fixed,
+              alpha: cutout,
+              width: 0.6,
+              height: 0.6,
+              origin_x: 0.5,
+              origin_y: 0.5,
+            }
+      - id: decal-feedback-yes
+        kind: prop
+        position: { x: 12.5, y: 13.98, z: 2.0 }
+        actor:
+          sprite:
+            {
+              texture: fps-kit.decal-feedback-yes,
+              facing: fixed,
+              alpha: cutout,
+              width: 0.6,
+              height: 0.6,
+              origin_x: 0.5,
+              origin_y: 0.5,
+            }
+      - id: decal-feedback-no
+        kind: prop
+        position: { x: 1.5, y: 13.98, z: 2.7 }
+        actor:
+          sprite:
+            {
+              texture: fps-kit.decal-feedback-no,
+              facing: fixed,
+              alpha: cutout,
+              width: 0.6,
+              height: 0.6,
+              origin_x: 0.5,
+              origin_y: 0.5,
+            }
+      - id: decal-feedback-wrong
+        kind: prop
+        position: { x: 3.7, y: 13.98, z: 2.7 }
+        actor:
+          sprite:
+            {
+              texture: fps-kit.decal-feedback-wrong,
+              facing: fixed,
+              alpha: cutout,
+              width: 0.6,
+              height: 0.6,
+              origin_x: 0.5,
+              origin_y: 0.5,
+            }
+      - id: decal-icon-question
+        kind: prop
+        position: { x: 5.9, y: 13.98, z: 2.7 }
+        actor:
+          sprite:
+            {
+              texture: fps-kit.decal-icon-question,
+              facing: fixed,
+              alpha: cutout,
+              width: 0.6,
+              height: 0.6,
+              origin_x: 0.5,
+              origin_y: 0.5,
+            }
+      - id: decal-icon-exclamation
+        kind: prop
+        position: { x: 8.1, y: 13.98, z: 2.7 }
+        actor:
+          sprite:
+            {
+              texture: fps-kit.decal-icon-exclamation,
+              facing: fixed,
+              alpha: cutout,
+              width: 0.6,
+              height: 0.6,
+              origin_x: 0.5,
+              origin_y: 0.5,
+            }
+      - id: decal-icon-eye
+        kind: prop
+        position: { x: 10.3, y: 13.98, z: 2.7 }
+        actor:
+          sprite:
+            {
+              texture: fps-kit.decal-icon-eye,
+              facing: fixed,
+              alpha: cutout,
+              width: 0.6,
+              height: 0.6,
+              origin_x: 0.5,
+              origin_y: 0.5,
+            }
+      - id: decal-icon-bomb
+        kind: prop
+        position: { x: 12.5, y: 13.98, z: 2.7 }
+        actor:
+          sprite:
+            {
+              texture: fps-kit.decal-icon-bomb,
+              facing: fixed,
+              alpha: cutout,
+              width: 0.6,
+              height: 0.6,
+              origin_x: 0.5,
+              origin_y: 0.5,
+            }
+      - id: decal-icon-explosion
+        kind: prop
+        position: { x: 1.5, y: 13.98, z: 3.4 }
+        actor:
+          sprite:
+            {
+              texture: fps-kit.decal-icon-explosion,
+              facing: fixed,
+              alpha: cutout,
+              width: 0.6,
+              height: 0.6,
+              origin_x: 0.5,
+              origin_y: 0.5,
+            }
+      - id: decal-icon-rocket
+        kind: prop
+        position: { x: 3.7, y: 13.98, z: 3.4 }
+        actor:
+          sprite:
+            {
+              texture: fps-kit.decal-icon-rocket,
+              facing: fixed,
+              alpha: cutout,
+              width: 0.6,
+              height: 0.6,
+              origin_x: 0.5,
+              origin_y: 0.5,
+            }
+      - id: decal-icon-star
+        kind: prop
+        position: { x: 5.9, y: 13.98, z: 3.4 }
+        actor:
+          tags: [placeholder, goal]
+          sprite:
+            {
+              texture: fps-kit.decal-icon-star,
+              facing: fixed,
+              alpha: cutout,
+              width: 0.6,
+              height: 0.6,
+              origin_x: 0.5,
+              origin_y: 0.5,
+            }
+      - id: decal-icon-heart
+        kind: prop
+        position: { x: 8.1, y: 13.98, z: 3.4 }
+        actor:
+          sprite:
+            {
+              texture: fps-kit.decal-icon-heart,
+              facing: fixed,
+              alpha: cutout,
+              width: 0.6,
+              height: 0.6,
+              origin_x: 0.5,
+              origin_y: 0.5,
+            }
+      - id: decal-icon-flag
+        kind: prop
+        position: { x: 10.3, y: 13.98, z: 3.4 }
+        actor:
+          sprite:
+            {
+              texture: fps-kit.decal-icon-flag,
+              facing: fixed,
+              alpha: cutout,
+              width: 0.6,
+              height: 0.6,
+              origin_x: 0.5,
+              origin_y: 0.5,
+            }
+      - id: decal-icon-target
+        kind: prop
+        position: { x: 12.5, y: 13.98, z: 3.4 }
+        actor:
+          sprite:
+            {
+              texture: fps-kit.decal-icon-target,
+              facing: fixed,
+              alpha: cutout,
+              width: 0.6,
+              height: 0.6,
+              origin_x: 0.5,
+              origin_y: 0.5,
+            }
+      - id: decal-icon-arrow
+        kind: prop
+        position: { x: 1.5, y: 13.98, z: 4.1 }
+        actor:
+          sprite:
+            {
+              texture: fps-kit.decal-icon-arrow,
+              facing: fixed,
+              alpha: cutout,
+              width: 0.6,
+              height: 0.6,
+              origin_x: 0.5,
+              origin_y: 0.5,
+            }
+      - id: decal-icon-key
+        kind: prop
+        position: { x: 3.7, y: 13.98, z: 4.1 }
+        actor:
+          sprite:
+            {
+              texture: fps-kit.decal-icon-key,
+              facing: fixed,
+              alpha: cutout,
+              width: 0.6,
+              height: 0.6,
+              origin_x: 0.5,
+              origin_y: 0.5,
+            }
+      - id: decal-icon-lock
+        kind: prop
+        position: { x: 5.9, y: 13.98, z: 4.1 }
+        actor:
+          sprite:
+            {
+              texture: fps-kit.decal-icon-lock,
+              facing: fixed,
+              alpha: cutout,
+              width: 0.6,
+              height: 0.6,
+              origin_x: 0.5,
+              origin_y: 0.5,
+            }
+      - id: decal-icon-skull
+        kind: prop
+        position: { x: 8.1, y: 13.98, z: 4.1 }
+        actor:
+          sprite:
+            {
+              texture: fps-kit.decal-icon-skull,
+              facing: fixed,
+              alpha: cutout,
+              width: 0.6,
+              height: 0.6,
+              origin_x: 0.5,
+              origin_y: 0.5,
+            }
+      - id: decal-icon-waypoint
+        kind: prop
+        position: { x: 10.3, y: 13.98, z: 4.1 }
+        actor:
+          sprite:
+            {
+              texture: fps-kit.decal-icon-waypoint,
+              facing: fixed,
+              alpha: cutout,
+              width: 0.6,
+              height: 0.6,
+              origin_x: 0.5,
+              origin_y: 0.5,
+            }
+      - id: decal-icon-check
+        kind: prop
+        position: { x: 12.5, y: 13.98, z: 4.1 }
+        actor:
+          sprite:
+            {
+              texture: fps-kit.decal-icon-check,
+              facing: fixed,
+              alpha: cutout,
+              width: 0.6,
+              height: 0.6,
+              origin_x: 0.5,
+              origin_y: 0.5,
+            }
+
+      # A fixed sprite lies on the floor when pitched 90 degrees.
+      # Keep a small surface offset to avoid depth fighting.
+      - id: floor-arrow
+        kind: prop
+        position: { x: 7, y: 5, z: 0.015 }
+        actor:
+          pitch_degrees: 90
+          tags: [placeholder, route]
+          sprite:
+            {
+              texture: fps-kit.decal-icon-arrow,
+              facing: fixed,
+              alpha: cutout,
+              width: 1,
+              height: 1,
+              origin_x: 0.5,
+              origin_y: 0.5,
+            }
+      - id: floor-target
+        kind: prop
+        position: { x: 7, y: 8, z: 0.015 }
+        actor:
+          pitch_degrees: 90
+          tags: [placeholder, point-of-interest]
+          sprite:
+            {
+              texture: fps-kit.decal-icon-target,
+              facing: fixed,
+              alpha: cutout,
+              width: 1,
+              height: 1,
+              origin_x: 0.5,
+              origin_y: 0.5,
+            }
+
+# Preserve the FPS starter's runtime crate renderer.
+prefabs:
+  - id: crate-medium-dynamic
+    renderable: true
+    instances:
+      - id: shape
+        prefab: fps-kit.crate-medium-dynamic

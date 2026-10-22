@@ -1,0 +1,74 @@
+name: Build package catalog
+on:
+  push:
+    branches: [main]
+    paths:
+      - catalog.json
+      - cmd/karty-catalog/**
+      - internal/catalog/**
+      - .github/workflows/catalog.yml
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: Deploy master.json to GitHub Pages (enable Pages first)
+        type: boolean
+        default: false
+  workflow_call:
+    inputs:
+      deploy:
+        type: boolean
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: packages-catalog
+  cancel-in-progress: false
+jobs:
+  build:
+    permissions:
+      contents: read
+      pages: write
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+      - uses: jdx/mise-action@v4
+      - name: Read published package releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p dist
+          gh api --paginate "repos/$GITHUB_REPOSITORY/releases?per_page=100" --jq '.[]' | jq -s . > dist/releases.json
+      - name: Generate the public catalog
+        run: go run ./cmd/karty-catalog --repository "$GITHUB_REPOSITORY" --releases dist/releases.json --output dist/catalog
+      - uses: actions/upload-artifact@v7
+        with:
+          name: package-catalog
+          path: dist/catalog/
+          if-no-files-found: error
+      - name: Configure Pages
+        if: inputs.deploy || (github.event_name == 'push' && vars.PACKAGE_CATALOG_PAGES == 'true')
+        uses: actions/configure-pages@v5
+      - name: Upload Pages artifact
+        if: inputs.deploy || (github.event_name == 'push' && vars.PACKAGE_CATALOG_PAGES == 'true')
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist/catalog/
+  deploy:
+    if: inputs.deploy || (github.event_name == 'push' && vars.PACKAGE_CATALOG_PAGES == 'true')
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy catalog
+        id: deployment
+        uses: actions/deploy-pages@v4

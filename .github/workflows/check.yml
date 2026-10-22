@@ -1,0 +1,69 @@
+name: Check packages
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  GOWORK: "off"
+  GOMAXPROCS: "2"
+jobs:
+  tooling:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      matrix: ${{ steps.packages.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: jdx/mise-action@v4
+      - run: mise run test-tools
+      - run: mise run check-fmt
+      - run: mise run lint
+      - run: mise run check-generated
+      - name: Discover package manifests
+        id: packages
+        run: echo "matrix=$(go run ./cmd/karty-package list)" >> "$GITHUB_OUTPUT"
+  package:
+    needs: tooling
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.tooling.outputs.matrix) }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      PACKAGE_NAME: ${{ matrix.package }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: jdx/mise-action@v4
+      - name: Validate package sources and native Go code
+        run: |
+          go run ./cmd/karty-package check "$PACKAGE_NAME"
+          if [ -f "packages/$PACKAGE_NAME/go.mod" ]; then
+            go -C "packages/$PACKAGE_NAME" test -count=1 -timeout=9s ./...
+            go -C "packages/$PACKAGE_NAME" build ./...
+          fi
+      - name: Install the dialogue compiler SDK
+        if: matrix.package == 'dialogue'
+        uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: packages/dialogue/global.json
+      - name: Validate the locked dialogue compiler
+        if: matrix.package == 'dialogue'
+        working-directory: packages/dialogue
+        run: |
+          dotnet restore compiler/Compiler.csproj --locked-mode
+          dotnet build compiler/Compiler.csproj --no-restore --nologo
+      - name: Export a candidate archive
+        run: go run ./cmd/karty-package pack --output dist/releases --commit "$(git rev-parse HEAD)" "$PACKAGE_NAME"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.tag }}
+          path: dist/releases/
+          if-no-files-found: error
+          retention-days: 7

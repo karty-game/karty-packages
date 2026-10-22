@@ -1,0 +1,41 @@
+{
+  "format_version": 1,
+  "packages": [
+    {
+      "name": "controllers",
+      "description": "Portable movement, input and camera controllers for Karty games.",
+      "tags": ["camera", "controllers", "input", "movement"],
+      "readme": "packages/controllers/README.md",
+      "source": "packages/controllers"
+    },
+    {
+      "name": "dialogue",
+      "description": "Yarn Spinner compilation, portable story execution and visual novel UI.",
+      "tags": ["dialogue", "narrative", "ui", "yarn"],
+      "readme": "packages/dialogue/README.md",
+      "source": "packages/dialogue"
+    },
+    {
+      "name": "fps-kit",
+      "description": "256px prototype materials, static and dynamic crates, metal bumpers and placeholder decals.",
+      "tags": ["3d", "decals", "fps", "materials", "prototyping"],
+      "readme": "packages/fps-kit/README.md",
+      "source": "packages/fps-kit",
+      "preview": "packages/fps-kit/screenshots/materials.png"
+    },
+    {
+      "name": "savegame",
+      "description": "Independent profile storage and saved run slots for portable Go games.",
+      "tags": ["persistence", "profiles", "savegame"],
+      "readme": "packages/savegame/README.md",
+      "source": "packages/savegame"
+    },
+    {
+      "name": "tiled",
+      "description": "Orthogonal Tiled maps, image importing, compiled maps and 2D sprite presentation.",
+      "tags": ["2d", "maps", "sprites", "tiled"],
+      "readme": "packages/tiled/README.md",
+      "source": "packages/tiled"
+    }
+  ]
+}

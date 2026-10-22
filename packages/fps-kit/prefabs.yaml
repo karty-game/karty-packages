@@ -1,0 +1,606 @@
+# Metres. Static crate origins sit on the floor; dynamic origins are centered.
+# Frames are geometry, so seamless wood stays aligned across sizes and rotation.
+# Each moving crate uses one box collider attached by the game.
+prefabs:
+  - id: crate-small
+    solids:
+      - id: panel
+        footprint: [{ x: -0.244, y: -0.244 }, { x: 0.244, y: -0.244 }, { x: 0.244, y: 0.244 }, { x: -0.244, y: 0.244 }]
+        bottom: { c: 0.035 }
+        top: { c: 0.465 }
+        side_material: crate-panel
+        top_material: crate-lid
+        bottom_material: crate-lid
+        collision: true
+      - id: lower-frame
+        footprint: [{ x: -0.25, y: -0.25 }, { x: 0.25, y: -0.25 }, { x: 0.25, y: 0.25 }, { x: -0.25, y: 0.25 }]
+        bottom: { c: 0 }
+        top: { c: 0.035 }
+        side_material: crate-frame
+        top_material: crate-lid
+        bottom_material: crate-lid
+        collision: true
+      - id: upper-frame
+        footprint: [{ x: -0.25, y: -0.25 }, { x: 0.25, y: -0.25 }, { x: 0.25, y: 0.25 }, { x: -0.25, y: 0.25 }]
+        bottom: { c: 0.465 }
+        top: { c: 0.5 }
+        side_material: crate-frame
+        top_material: crate-lid
+        bottom_material: crate-lid
+        collision: true
+      - id: post-sw
+        footprint: [{ x: -0.25, y: -0.25 }, { x: -0.215, y: -0.25 }, { x: -0.215, y: -0.215 }, { x: -0.25, y: -0.215 }]
+        bottom: { c: 0.035 }
+        top: { c: 0.465 }
+        side_material: crate-frame
+        top_material: crate-frame
+        bottom_material: crate-frame
+        collision: true
+      - id: post-se
+        footprint: [{ x: 0.215, y: -0.25 }, { x: 0.25, y: -0.25 }, { x: 0.25, y: -0.215 }, { x: 0.215, y: -0.215 }]
+        bottom: { c: 0.035 }
+        top: { c: 0.465 }
+        side_material: crate-frame
+        top_material: crate-frame
+        bottom_material: crate-frame
+        collision: true
+      - id: post-ne
+        footprint: [{ x: 0.215, y: 0.215 }, { x: 0.25, y: 0.215 }, { x: 0.25, y: 0.25 }, { x: 0.215, y: 0.25 }]
+        bottom: { c: 0.035 }
+        top: { c: 0.465 }
+        side_material: crate-frame
+        top_material: crate-frame
+        bottom_material: crate-frame
+        collision: true
+      - id: post-nw
+        footprint: [{ x: -0.25, y: 0.215 }, { x: -0.215, y: 0.215 }, { x: -0.215, y: 0.25 }, { x: -0.25, y: 0.25 }]
+        bottom: { c: 0.035 }
+        top: { c: 0.465 }
+        side_material: crate-frame
+        top_material: crate-frame
+        bottom_material: crate-frame
+        collision: true
+  - id: crate-medium
+    solids:
+      - id: panel
+        footprint: [{ x: -0.488, y: -0.488 }, { x: 0.488, y: -0.488 }, { x: 0.488, y: 0.488 }, { x: -0.488, y: 0.488 }]
+        bottom: { c: 0.07 }
+        top: { c: 0.93 }
+        side_material: crate-panel
+        top_material: crate-lid
+        bottom_material: crate-lid
+        collision: true
+      - id: lower-frame
+        footprint: [{ x: -0.5, y: -0.5 }, { x: 0.5, y: -0.5 }, { x: 0.5, y: 0.5 }, { x: -0.5, y: 0.5 }]
+        bottom: { c: 0 }
+        top: { c: 0.07 }
+        side_material: crate-frame
+        top_material: crate-lid
+        bottom_material: crate-lid
+        collision: true
+      - id: upper-frame
+        footprint: [{ x: -0.5, y: -0.5 }, { x: 0.5, y: -0.5 }, { x: 0.5, y: 0.5 }, { x: -0.5, y: 0.5 }]
+        bottom: { c: 0.93 }
+        top: { c: 1 }
+        side_material: crate-frame
+        top_material: crate-lid
+        bottom_material: crate-lid
+        collision: true
+      - id: post-sw
+        footprint: [{ x: -0.5, y: -0.5 }, { x: -0.43, y: -0.5 }, { x: -0.43, y: -0.43 }, { x: -0.5, y: -0.43 }]
+        bottom: { c: 0.07 }
+        top: { c: 0.93 }
+        side_material: crate-frame
+        top_material: crate-frame
+        bottom_material: crate-frame
+        collision: true
+      - id: post-se
+        footprint: [{ x: 0.43, y: -0.5 }, { x: 0.5, y: -0.5 }, { x: 0.5, y: -0.43 }, { x: 0.43, y: -0.43 }]
+        bottom: { c: 0.07 }
+        top: { c: 0.93 }
+        side_material: crate-frame
+        top_material: crate-frame
+        bottom_material: crate-frame
+        collision: true
+      - id: post-ne
+        footprint: [{ x: 0.43, y: 0.43 }, { x: 0.5, y: 0.43 }, { x: 0.5, y: 0.5 }, { x: 0.43, y: 0.5 }]
+        bottom: { c: 0.07 }
+        top: { c: 0.93 }
+        side_material: crate-frame
+        top_material: crate-frame
+        bottom_material: crate-frame
+        collision: true
+      - id: post-nw
+        footprint: [{ x: -0.5, y: 0.43 }, { x: -0.43, y: 0.43 }, { x: -0.43, y: 0.5 }, { x: -0.5, y: 0.5 }]
+        bottom: { c: 0.07 }
+        top: { c: 0.93 }
+        side_material: crate-frame
+        top_material: crate-frame
+        bottom_material: crate-frame
+        collision: true
+  - id: crate-large
+    solids:
+      - id: panel
+        footprint: [{ x: -0.976, y: -0.976 }, { x: 0.976, y: -0.976 }, { x: 0.976, y: 0.976 }, { x: -0.976, y: 0.976 }]
+        bottom: { c: 0.14 }
+        top: { c: 1.86 }
+        side_material: crate-panel
+        top_material: crate-lid
+        bottom_material: crate-lid
+        collision: true
+      - id: lower-frame
+        footprint: [{ x: -1, y: -1 }, { x: 1, y: -1 }, { x: 1, y: 1 }, { x: -1, y: 1 }]
+        bottom: { c: 0 }
+        top: { c: 0.14 }
+        side_material: crate-frame
+        top_material: crate-lid
+        bottom_material: crate-lid
+        collision: true
+      - id: upper-frame
+        footprint: [{ x: -1, y: -1 }, { x: 1, y: -1 }, { x: 1, y: 1 }, { x: -1, y: 1 }]
+        bottom: { c: 1.86 }
+        top: { c: 2 }
+        side_material: crate-frame
+        top_material: crate-lid
+        bottom_material: crate-lid
+        collision: true
+      - id: post-sw
+        footprint: [{ x: -1, y: -1 }, { x: -0.86, y: -1 }, { x: -0.86, y: -0.86 }, { x: -1, y: -0.86 }]
+        bottom: { c: 0.14 }
+        top: { c: 1.86 }
+        side_material: crate-frame
+        top_material: crate-frame
+        bottom_material: crate-frame
+        collision: true
+      - id: post-se
+        footprint: [{ x: 0.86, y: -1 }, { x: 1, y: -1 }, { x: 1, y: -0.86 }, { x: 0.86, y: -0.86 }]
+        bottom: { c: 0.14 }
+        top: { c: 1.86 }
+        side_material: crate-frame
+        top_material: crate-frame
+        bottom_material: crate-frame
+        collision: true
+      - id: post-ne
+        footprint: [{ x: 0.86, y: 0.86 }, { x: 1, y: 0.86 }, { x: 1, y: 1 }, { x: 0.86, y: 1 }]
+        bottom: { c: 0.14 }
+        top: { c: 1.86 }
+        side_material: crate-frame
+        top_material: crate-frame
+        bottom_material: crate-frame
+        collision: true
+      - id: post-nw
+        footprint: [{ x: -1, y: 0.86 }, { x: -0.86, y: 0.86 }, { x: -0.86, y: 1 }, { x: -1, y: 1 }]
+        bottom: { c: 0.14 }
+        top: { c: 1.86 }
+        side_material: crate-frame
+        top_material: crate-frame
+        bottom_material: crate-frame
+        collision: true
+  - id: crate-long
+    solids:
+      - id: panel
+        footprint: [{ x: -0.988, y: -0.488 }, { x: 0.988, y: -0.488 }, { x: 0.988, y: 0.488 }, { x: -0.988, y: 0.488 }]
+        bottom: { c: 0.07 }
+        top: { c: 0.93 }
+        side_material: crate-panel
+        top_material: crate-lid
+        bottom_material: crate-lid
+        collision: true
+      - id: lower-frame
+        footprint: [{ x: -1, y: -0.5 }, { x: 1, y: -0.5 }, { x: 1, y: 0.5 }, { x: -1, y: 0.5 }]
+        bottom: { c: 0 }
+        top: { c: 0.07 }
+        side_material: crate-frame
+        top_material: crate-lid
+        bottom_material: crate-lid
+        collision: true
+      - id: upper-frame
+        footprint: [{ x: -1, y: -0.5 }, { x: 1, y: -0.5 }, { x: 1, y: 0.5 }, { x: -1, y: 0.5 }]
+        bottom: { c: 0.93 }
+        top: { c: 1 }
+        side_material: crate-frame
+        top_material: crate-lid
+        bottom_material: crate-lid
+        collision: true
+      - id: post-sw
+        footprint: [{ x: -1, y: -0.5 }, { x: -0.93, y: -0.5 }, { x: -0.93, y: -0.43 }, { x: -1, y: -0.43 }]
+        bottom: { c: 0.07 }
+        top: { c: 0.93 }
+        side_material: crate-frame
+        top_material: crate-frame
+        bottom_material: crate-frame
+        collision: true
+      - id: post-se
+        footprint: [{ x: 0.93, y: -0.5 }, { x: 1, y: -0.5 }, { x: 1, y: -0.43 }, { x: 0.93, y: -0.43 }]
+        bottom: { c: 0.07 }
+        top: { c: 0.93 }
+        side_material: crate-frame
+        top_material: crate-frame
+        bottom_material: crate-frame
+        collision: true
+      - id: post-ne
+        footprint: [{ x: 0.93, y: 0.43 }, { x: 1, y: 0.43 }, { x: 1, y: 0.5 }, { x: 0.93, y: 0.5 }]
+        bottom: { c: 0.07 }
+        top: { c: 0.93 }
+        side_material: crate-frame
+        top_material: crate-frame
+        bottom_material: crate-frame
+        collision: true
+      - id: post-nw
+        footprint: [{ x: -1, y: 0.43 }, { x: -0.93, y: 0.43 }, { x: -0.93, y: 0.5 }, { x: -1, y: 0.5 }]
+        bottom: { c: 0.07 }
+        top: { c: 0.93 }
+        side_material: crate-frame
+        top_material: crate-frame
+        bottom_material: crate-frame
+        collision: true
+  - id: crate-tall
+    solids:
+      - id: panel
+        footprint: [{ x: -0.488, y: -0.488 }, { x: 0.488, y: -0.488 }, { x: 0.488, y: 0.488 }, { x: -0.488, y: 0.488 }]
+        bottom: { c: 0.07 }
+        top: { c: 1.93 }
+        side_material: crate-panel
+        top_material: crate-lid
+        bottom_material: crate-lid
+        collision: true
+      - id: lower-frame
+        footprint: [{ x: -0.5, y: -0.5 }, { x: 0.5, y: -0.5 }, { x: 0.5, y: 0.5 }, { x: -0.5, y: 0.5 }]
+        bottom: { c: 0 }
+        top: { c: 0.07 }
+        side_material: crate-frame
+        top_material: crate-lid
+        bottom_material: crate-lid
+        collision: true
+      - id: upper-frame
+        footprint: [{ x: -0.5, y: -0.5 }, { x: 0.5, y: -0.5 }, { x: 0.5, y: 0.5 }, { x: -0.5, y: 0.5 }]
+        bottom: { c: 1.93 }
+        top: { c: 2 }
+        side_material: crate-frame
+        top_material: crate-lid
+        bottom_material: crate-lid
+        collision: true
+      - id: post-sw
+        footprint: [{ x: -0.5, y: -0.5 }, { x: -0.43, y: -0.5 }, { x: -0.43, y: -0.43 }, { x: -0.5, y: -0.43 }]
+        bottom: { c: 0.07 }
+        top: { c: 1.93 }
+        side_material: crate-frame
+        top_material: crate-frame
+        bottom_material: crate-frame
+        collision: true
+      - id: post-se
+        footprint: [{ x: 0.43, y: -0.5 }, { x: 0.5, y: -0.5 }, { x: 0.5, y: -0.43 }, { x: 0.43, y: -0.43 }]
+        bottom: { c: 0.07 }
+        top: { c: 1.93 }
+        side_material: crate-frame
+        top_material: crate-frame
+        bottom_material: crate-frame
+        collision: true
+      - id: post-ne
+        footprint: [{ x: 0.43, y: 0.43 }, { x: 0.5, y: 0.43 }, { x: 0.5, y: 0.5 }, { x: 0.43, y: 0.5 }]
+        bottom: { c: 0.07 }
+        top: { c: 1.93 }
+        side_material: crate-frame
+        top_material: crate-frame
+        bottom_material: crate-frame
+        collision: true
+      - id: post-nw
+        footprint: [{ x: -0.5, y: 0.43 }, { x: -0.43, y: 0.43 }, { x: -0.43, y: 0.5 }, { x: -0.5, y: 0.5 }]
+        bottom: { c: 0.07 }
+        top: { c: 1.93 }
+        side_material: crate-frame
+        top_material: crate-frame
+        bottom_material: crate-frame
+        collision: true
+  - id: crate-stack
+    instances:
+      - id: left
+        prefab: crate-medium
+        transform: { translation: { x: -0.5, y: 0, z: 0 } }
+      - id: right
+        prefab: crate-medium
+        transform: { translation: { x: 0.5, y: 0, z: 0 } }
+      - id: upper
+        prefab: crate-medium
+        transform: { translation: { x: 0, y: 0, z: 1 } }
+  - id: cover-low
+    solids:
+      - id: barrier
+        footprint:
+          [
+            { x: -1, y: -0.125 },
+            { x: 1, y: -0.125 },
+            { x: 1, y: 0.125 },
+            { x: -1, y: 0.125 },
+          ]
+        bottom: { c: 0 }
+        top: { c: 1 }
+        side_material: wall-orange-panel
+        top_material: trim-hazard
+        bottom_material: floor-dark-grid
+        collision: true
+  - id: bumper-low
+    solids:
+      - id: body
+        footprint: [{ x: 0.85, y: 0 }, { x: 0.601, y: 0.601 }, { x: 0, y: 0.85 }, { x: -0.601, y: 0.601 }, { x: -0.85, y: 0 }, { x: -0.601, y: -0.601 }, { x: 0, y: -0.85 }, { x: 0.601, y: -0.601 }]
+        bottom: { c: 0 }
+        top: { c: 0.75 }
+        side_material: bumper-red-metal
+        top_material: bumper-metal-cap
+        bottom_material: bumper-metal-cap
+        collision: true
+  - id: bumper-cover
+    solids:
+      - id: body
+        footprint: [{ x: 0.85, y: 0 }, { x: 0.601, y: 0.601 }, { x: 0, y: 0.85 }, { x: -0.601, y: 0.601 }, { x: -0.85, y: 0 }, { x: -0.601, y: -0.601 }, { x: 0, y: -0.85 }, { x: 0.601, y: -0.601 }]
+        bottom: { c: 0 }
+        top: { c: 1.25 }
+        side_material: bumper-red-metal
+        top_material: bumper-metal-cap
+        bottom_material: bumper-metal-cap
+        collision: true
+  - id: bumper-tall
+    solids:
+      - id: body
+        footprint: [{ x: 0.85, y: 0 }, { x: 0.601, y: 0.601 }, { x: 0, y: 0.85 }, { x: -0.601, y: 0.601 }, { x: -0.85, y: 0 }, { x: -0.601, y: -0.601 }, { x: 0, y: -0.85 }, { x: 0.601, y: -0.601 }]
+        bottom: { c: 0 }
+        top: { c: 2 }
+        side_material: bumper-red-metal
+        top_material: bumper-metal-cap
+        bottom_material: bumper-metal-cap
+        collision: true
+  - id: crate-small-dynamic
+    solids:
+      - id: panel
+        footprint: [{ x: -0.244, y: -0.244 }, { x: 0.244, y: -0.244 }, { x: 0.244, y: 0.244 }, { x: -0.244, y: 0.244 }]
+        bottom: { c: -0.215 }
+        top: { c: 0.215 }
+        side_material: crate-panel
+        top_material: crate-lid
+        bottom_material: crate-lid
+      - id: lower-frame
+        footprint: [{ x: -0.25, y: -0.25 }, { x: 0.25, y: -0.25 }, { x: 0.25, y: 0.25 }, { x: -0.25, y: 0.25 }]
+        bottom: { c: -0.25 }
+        top: { c: -0.215 }
+        side_material: crate-frame
+        top_material: crate-lid
+        bottom_material: crate-lid
+      - id: upper-frame
+        footprint: [{ x: -0.25, y: -0.25 }, { x: 0.25, y: -0.25 }, { x: 0.25, y: 0.25 }, { x: -0.25, y: 0.25 }]
+        bottom: { c: 0.215 }
+        top: { c: 0.25 }
+        side_material: crate-frame
+        top_material: crate-lid
+        bottom_material: crate-lid
+      - id: post-sw
+        footprint: [{ x: -0.25, y: -0.25 }, { x: -0.215, y: -0.25 }, { x: -0.215, y: -0.215 }, { x: -0.25, y: -0.215 }]
+        bottom: { c: -0.215 }
+        top: { c: 0.215 }
+        side_material: crate-frame
+        top_material: crate-frame
+        bottom_material: crate-frame
+      - id: post-se
+        footprint: [{ x: 0.215, y: -0.25 }, { x: 0.25, y: -0.25 }, { x: 0.25, y: -0.215 }, { x: 0.215, y: -0.215 }]
+        bottom: { c: -0.215 }
+        top: { c: 0.215 }
+        side_material: crate-frame
+        top_material: crate-frame
+        bottom_material: crate-frame
+      - id: post-ne
+        footprint: [{ x: 0.215, y: 0.215 }, { x: 0.25, y: 0.215 }, { x: 0.25, y: 0.25 }, { x: 0.215, y: 0.25 }]
+        bottom: { c: -0.215 }
+        top: { c: 0.215 }
+        side_material: crate-frame
+        top_material: crate-frame
+        bottom_material: crate-frame
+      - id: post-nw
+        footprint: [{ x: -0.25, y: 0.215 }, { x: -0.215, y: 0.215 }, { x: -0.215, y: 0.25 }, { x: -0.25, y: 0.25 }]
+        bottom: { c: -0.215 }
+        top: { c: 0.215 }
+        side_material: crate-frame
+        top_material: crate-frame
+        bottom_material: crate-frame
+  - id: crate-medium-dynamic
+    solids:
+      - id: panel
+        footprint: [{ x: -0.488, y: -0.488 }, { x: 0.488, y: -0.488 }, { x: 0.488, y: 0.488 }, { x: -0.488, y: 0.488 }]
+        bottom: { c: -0.43 }
+        top: { c: 0.43 }
+        side_material: crate-panel
+        top_material: crate-lid
+        bottom_material: crate-lid
+      - id: lower-frame
+        footprint: [{ x: -0.5, y: -0.5 }, { x: 0.5, y: -0.5 }, { x: 0.5, y: 0.5 }, { x: -0.5, y: 0.5 }]
+        bottom: { c: -0.5 }
+        top: { c: -0.43 }
+        side_material: crate-frame
+        top_material: crate-lid
+        bottom_material: crate-lid
+      - id: upper-frame
+        footprint: [{ x: -0.5, y: -0.5 }, { x: 0.5, y: -0.5 }, { x: 0.5, y: 0.5 }, { x: -0.5, y: 0.5 }]
+        bottom: { c: 0.43 }
+        top: { c: 0.5 }
+        side_material: crate-frame
+        top_material: crate-lid
+        bottom_material: crate-lid
+      - id: post-sw
+        footprint: [{ x: -0.5, y: -0.5 }, { x: -0.43, y: -0.5 }, { x: -0.43, y: -0.43 }, { x: -0.5, y: -0.43 }]
+        bottom: { c: -0.43 }
+        top: { c: 0.43 }
+        side_material: crate-frame
+        top_material: crate-frame
+        bottom_material: crate-frame
+      - id: post-se
+        footprint: [{ x: 0.43, y: -0.5 }, { x: 0.5, y: -0.5 }, { x: 0.5, y: -0.43 }, { x: 0.43, y: -0.43 }]
+        bottom: { c: -0.43 }
+        top: { c: 0.43 }
+        side_material: crate-frame
+        top_material: crate-frame
+        bottom_material: crate-frame
+      - id: post-ne
+        footprint: [{ x: 0.43, y: 0.43 }, { x: 0.5, y: 0.43 }, { x: 0.5, y: 0.5 }, { x: 0.43, y: 0.5 }]
+        bottom: { c: -0.43 }
+        top: { c: 0.43 }
+        side_material: crate-frame
+        top_material: crate-frame
+        bottom_material: crate-frame
+      - id: post-nw
+        footprint: [{ x: -0.5, y: 0.43 }, { x: -0.43, y: 0.43 }, { x: -0.43, y: 0.5 }, { x: -0.5, y: 0.5 }]
+        bottom: { c: -0.43 }
+        top: { c: 0.43 }
+        side_material: crate-frame
+        top_material: crate-frame
+        bottom_material: crate-frame
+  - id: crate-large-dynamic
+    solids:
+      - id: panel
+        footprint: [{ x: -0.976, y: -0.976 }, { x: 0.976, y: -0.976 }, { x: 0.976, y: 0.976 }, { x: -0.976, y: 0.976 }]
+        bottom: { c: -0.86 }
+        top: { c: 0.86 }
+        side_material: crate-panel
+        top_material: crate-lid
+        bottom_material: crate-lid
+      - id: lower-frame
+        footprint: [{ x: -1, y: -1 }, { x: 1, y: -1 }, { x: 1, y: 1 }, { x: -1, y: 1 }]
+        bottom: { c: -1 }
+        top: { c: -0.86 }
+        side_material: crate-frame
+        top_material: crate-lid
+        bottom_material: crate-lid
+      - id: upper-frame
+        footprint: [{ x: -1, y: -1 }, { x: 1, y: -1 }, { x: 1, y: 1 }, { x: -1, y: 1 }]
+        bottom: { c: 0.86 }
+        top: { c: 1 }
+        side_material: crate-frame
+        top_material: crate-lid
+        bottom_material: crate-lid
+      - id: post-sw
+        footprint: [{ x: -1, y: -1 }, { x: -0.86, y: -1 }, { x: -0.86, y: -0.86 }, { x: -1, y: -0.86 }]
+        bottom: { c: -0.86 }
+        top: { c: 0.86 }
+        side_material: crate-frame
+        top_material: crate-frame
+        bottom_material: crate-frame
+      - id: post-se
+        footprint: [{ x: 0.86, y: -1 }, { x: 1, y: -1 }, { x: 1, y: -0.86 }, { x: 0.86, y: -0.86 }]
+        bottom: { c: -0.86 }
+        top: { c: 0.86 }
+        side_material: crate-frame
+        top_material: crate-frame
+        bottom_material: crate-frame
+      - id: post-ne
+        footprint: [{ x: 0.86, y: 0.86 }, { x: 1, y: 0.86 }, { x: 1, y: 1 }, { x: 0.86, y: 1 }]
+        bottom: { c: -0.86 }
+        top: { c: 0.86 }
+        side_material: crate-frame
+        top_material: crate-frame
+        bottom_material: crate-frame
+      - id: post-nw
+        footprint: [{ x: -1, y: 0.86 }, { x: -0.86, y: 0.86 }, { x: -0.86, y: 1 }, { x: -1, y: 1 }]
+        bottom: { c: -0.86 }
+        top: { c: 0.86 }
+        side_material: crate-frame
+        top_material: crate-frame
+        bottom_material: crate-frame
+  - id: crate-long-dynamic
+    solids:
+      - id: panel
+        footprint: [{ x: -0.988, y: -0.488 }, { x: 0.988, y: -0.488 }, { x: 0.988, y: 0.488 }, { x: -0.988, y: 0.488 }]
+        bottom: { c: -0.43 }
+        top: { c: 0.43 }
+        side_material: crate-panel
+        top_material: crate-lid
+        bottom_material: crate-lid
+      - id: lower-frame
+        footprint: [{ x: -1, y: -0.5 }, { x: 1, y: -0.5 }, { x: 1, y: 0.5 }, { x: -1, y: 0.5 }]
+        bottom: { c: -0.5 }
+        top: { c: -0.43 }
+        side_material: crate-frame
+        top_material: crate-lid
+        bottom_material: crate-lid
+      - id: upper-frame
+        footprint: [{ x: -1, y: -0.5 }, { x: 1, y: -0.5 }, { x: 1, y: 0.5 }, { x: -1, y: 0.5 }]
+        bottom: { c: 0.43 }
+        top: { c: 0.5 }
+        side_material: crate-frame
+        top_material: crate-lid
+        bottom_material: crate-lid
+      - id: post-sw
+        footprint: [{ x: -1, y: -0.5 }, { x: -0.93, y: -0.5 }, { x: -0.93, y: -0.43 }, { x: -1, y: -0.43 }]
+        bottom: { c: -0.43 }
+        top: { c: 0.43 }
+        side_material: crate-frame
+        top_material: crate-frame
+        bottom_material: crate-frame
+      - id: post-se
+        footprint: [{ x: 0.93, y: -0.5 }, { x: 1, y: -0.5 }, { x: 1, y: -0.43 }, { x: 0.93, y: -0.43 }]
+        bottom: { c: -0.43 }
+        top: { c: 0.43 }
+        side_material: crate-frame
+        top_material: crate-frame
+        bottom_material: crate-frame
+      - id: post-ne
+        footprint: [{ x: 0.93, y: 0.43 }, { x: 1, y: 0.43 }, { x: 1, y: 0.5 }, { x: 0.93, y: 0.5 }]
+        bottom: { c: -0.43 }
+        top: { c: 0.43 }
+        side_material: crate-frame
+        top_material: crate-frame
+        bottom_material: crate-frame
+      - id: post-nw
+        footprint: [{ x: -1, y: 0.43 }, { x: -0.93, y: 0.43 }, { x: -0.93, y: 0.5 }, { x: -1, y: 0.5 }]
+        bottom: { c: -0.43 }
+        top: { c: 0.43 }
+        side_material: crate-frame
+        top_material: crate-frame
+        bottom_material: crate-frame
+  - id: crate-tall-dynamic
+    solids:
+      - id: panel
+        footprint: [{ x: -0.488, y: -0.488 }, { x: 0.488, y: -0.488 }, { x: 0.488, y: 0.488 }, { x: -0.488, y: 0.488 }]
+        bottom: { c: -0.93 }
+        top: { c: 0.93 }
+        side_material: crate-panel
+        top_material: crate-lid
+        bottom_material: crate-lid
+      - id: lower-frame
+        footprint: [{ x: -0.5, y: -0.5 }, { x: 0.5, y: -0.5 }, { x: 0.5, y: 0.5 }, { x: -0.5, y: 0.5 }]
+        bottom: { c: -1 }
+        top: { c: -0.93 }
+        side_material: crate-frame
+        top_material: crate-lid
+        bottom_material: crate-lid
+      - id: upper-frame
+        footprint: [{ x: -0.5, y: -0.5 }, { x: 0.5, y: -0.5 }, { x: 0.5, y: 0.5 }, { x: -0.5, y: 0.5 }]
+        bottom: { c: 0.93 }
+        top: { c: 1 }
+        side_material: crate-frame
+        top_material: crate-lid
+        bottom_material: crate-lid
+      - id: post-sw
+        footprint: [{ x: -0.5, y: -0.5 }, { x: -0.43, y: -0.5 }, { x: -0.43, y: -0.43 }, { x: -0.5, y: -0.43 }]
+        bottom: { c: -0.93 }
+        top: { c: 0.93 }
+        side_material: crate-frame
+        top_material: crate-frame
+        bottom_material: crate-frame
+      - id: post-se
+        footprint: [{ x: 0.43, y: -0.5 }, { x: 0.5, y: -0.5 }, { x: 0.5, y: -0.43 }, { x: 0.43, y: -0.43 }]
+        bottom: { c: -0.93 }
+        top: { c: 0.93 }
+        side_material: crate-frame
+        top_material: crate-frame
+        bottom_material: crate-frame
+      - id: post-ne
+        footprint: [{ x: 0.43, y: 0.43 }, { x: 0.5, y: 0.43 }, { x: 0.5, y: 0.5 }, { x: 0.43, y: 0.5 }]
+        bottom: { c: -0.93 }
+        top: { c: 0.93 }
+        side_material: crate-frame
+        top_material: crate-frame
+        bottom_material: crate-frame
+      - id: post-nw
+        footprint: [{ x: -0.5, y: 0.43 }, { x: -0.43, y: 0.43 }, { x: -0.43, y: 0.5 }, { x: -0.5, y: 0.5 }]
+        bottom: { c: -0.93 }
+        top: { c: 0.93 }
+        side_material: crate-frame
+        top_material: crate-frame
+        bottom_material: crate-frame

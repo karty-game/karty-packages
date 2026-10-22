@@ -1,0 +1,6 @@
+[level]
+name = "levels.room"
+kind = "world"
+
+[world]
+source = "world.yaml"

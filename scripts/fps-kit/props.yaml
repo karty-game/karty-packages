@@ -1,0 +1,29 @@
+# Handwritten static extras appended to the generated crate library.
+prefabs:
+  - id: crate-stack
+    instances:
+      - id: left
+        prefab: crate-medium
+        transform: { translation: { x: -0.5, y: 0, z: 0 } }
+      - id: right
+        prefab: crate-medium
+        transform: { translation: { x: 0.5, y: 0, z: 0 } }
+      - id: upper
+        prefab: crate-medium
+        transform: { translation: { x: 0, y: 0, z: 1 } }
+  - id: cover-low
+    solids:
+      - id: barrier
+        footprint:
+          [
+            { x: -1, y: -0.125 },
+            { x: 1, y: -0.125 },
+            { x: 1, y: 0.125 },
+            { x: -1, y: 0.125 },
+          ]
+        bottom: { c: 0 }
+        top: { c: 1 }
+        side_material: wall-orange-panel
+        top_material: trim-hazard
+        bottom_material: floor-dark-grid
+        collision: true

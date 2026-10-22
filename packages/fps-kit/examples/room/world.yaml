@@ -1,0 +1,556 @@
+# Copy this folder to levels/room in an FPS starter after importing fps-kit.
+# Metres; player spawn (2, 2, 1.7); clear route through the middle.
+version: 11
+uv: { mode: wrap, scale: { x: 1, y: 1 } }
+lighting:
+  version: 1
+  actors: true
+  ambient: { x: 0.3, y: 0.3, z: 0.3 }
+  lights:
+    - {
+        id: key,
+        position: { x: 3, y: 4, z: 3.5 },
+        color: { x: 1, y: 0.93, z: 0.82 },
+        radius: 16,
+      }
+    - {
+        id: fill,
+        position: { x: 11, y: 11, z: 3.5 },
+        color: { x: 0.78, y: 0.9, z: 1 },
+        radius: 16,
+      }
+rooms:
+  - id: room
+    floor: { c: 0 }
+    ceiling: { c: 4 }
+    floor_material: fps-kit.floor-gray-grid
+    ceiling_material: fps-kit.ceiling-dark-panel
+    boundary:
+      - {
+          id: south,
+          start: { x: 0, y: 0 },
+          end: { x: 14, y: 0 },
+          material: fps-kit.wall-orange-grid,
+        }
+      - {
+          id: east,
+          start: { x: 14, y: 0 },
+          end: { x: 14, y: 14 },
+          material: fps-kit.wall-blue-concrete,
+        }
+      - {
+          id: north,
+          start: { x: 14, y: 14 },
+          end: { x: 0, y: 14 },
+          material: fps-kit.wall-brick,
+        }
+      - {
+          id: west,
+          start: { x: 0, y: 14 },
+          end: { x: 0, y: 0 },
+          material: fps-kit.wall-white-panel,
+        }
+
+instances:
+  - id: crate-small
+    prefab: fps-kit.crate-small
+    transform: { translation: { x: 3, y: 5, z: 0 } }
+  - id: crate-medium
+    prefab: fps-kit.crate-medium
+    transform: { translation: { x: 5, y: 5, z: 0 } }
+  - id: crate-large
+    prefab: fps-kit.crate-large
+    transform: { translation: { x: 3, y: 9, z: 0 } }
+  - id: crate-long
+    prefab: fps-kit.crate-long
+    transform: { translation: { x: 6, y: 9, z: 0 } }
+  - id: crate-tall
+    prefab: fps-kit.crate-tall
+    transform: { translation: { x: 9, y: 12, z: 0 } }
+  - id: crate-stack
+    prefab: fps-kit.crate-stack
+    transform: { translation: { x: 12, y: 12, z: 0 } }
+  - id: cover-low
+    prefab: fps-kit.cover-low
+    transform: { translation: { x: 10, y: 5, z: 0 } }
+  - id: bumper-low
+    prefab: fps-kit.bumper-low
+    transform: { translation: { x: 3, y: 7, z: 0 } }
+  - id: bumper-cover
+    prefab: fps-kit.bumper-cover
+    transform: { translation: { x: 7, y: 7, z: 0 } }
+  - id: bumper-tall
+    prefab: fps-kit.bumper-tall
+    transform: { translation: { x: 11, y: 7, z: 0 } }
+
+# A 25 cm step shows alternate floor/ceiling materials without extra images.
+solids:
+  - id: step
+    footprint:
+      [{ x: 5, y: 11 }, { x: 7, y: 11 }, { x: 7, y: 13 }, { x: 5, y: 13 }]
+    bottom: { c: 0 }
+    top: { c: 0.25 }
+    side_material: fps-kit.floor-dark-checker
+    top_material: fps-kit.floor-gray-checker
+    bottom_material: fps-kit.ceiling-gray-panel
+    collision: true
+
+  # Small, non-colliding swatches keep the room outline a simple rectangle.
+  - id: sample-wall-orange-panel
+    footprint:
+      [
+        { x: 0.5, y: 0.04 },
+        { x: 1.4, y: 0.04 },
+        { x: 1.4, y: 0.11 },
+        { x: 0.5, y: 0.11 },
+      ]
+    bottom: { c: 1.8 }
+    top: { c: 2.7 }
+    side_material: fps-kit.wall-orange-panel
+    top_material: fps-kit.wall-orange-panel
+    bottom_material: fps-kit.wall-orange-panel
+  - id: sample-wall-orange-checker
+    footprint:
+      [
+        { x: 1.5, y: 0.04 },
+        { x: 2.4, y: 0.04 },
+        { x: 2.4, y: 0.11 },
+        { x: 1.5, y: 0.11 },
+      ]
+    bottom: { c: 1.8 }
+    top: { c: 2.7 }
+    side_material: fps-kit.wall-orange-checker
+    top_material: fps-kit.wall-orange-checker
+    bottom_material: fps-kit.wall-orange-checker
+  - id: sample-wall-red-grid
+    footprint:
+      [
+        { x: 2.5, y: 0.04 },
+        { x: 3.4, y: 0.04 },
+        { x: 3.4, y: 0.11 },
+        { x: 2.5, y: 0.11 },
+      ]
+    bottom: { c: 1.8 }
+    top: { c: 2.7 }
+    side_material: fps-kit.wall-red-grid
+    top_material: fps-kit.wall-red-grid
+    bottom_material: fps-kit.wall-red-grid
+  - id: sample-wall-red-panel
+    footprint:
+      [
+        { x: 3.5, y: 0.04 },
+        { x: 4.4, y: 0.04 },
+        { x: 4.4, y: 0.11 },
+        { x: 3.5, y: 0.11 },
+      ]
+    bottom: { c: 1.8 }
+    top: { c: 2.7 }
+    side_material: fps-kit.wall-red-panel
+    top_material: fps-kit.wall-red-panel
+    bottom_material: fps-kit.wall-red-panel
+  - id: sample-wall-red-checker
+    footprint:
+      [
+        { x: 4.5, y: 0.04 },
+        { x: 5.4, y: 0.04 },
+        { x: 5.4, y: 0.11 },
+        { x: 4.5, y: 0.11 },
+      ]
+    bottom: { c: 1.8 }
+    top: { c: 2.7 }
+    side_material: fps-kit.wall-red-checker
+    top_material: fps-kit.wall-red-checker
+    bottom_material: fps-kit.wall-red-checker
+  - id: sample-wall-blue-grid
+    footprint:
+      [
+        { x: 5.5, y: 0.04 },
+        { x: 6.4, y: 0.04 },
+        { x: 6.4, y: 0.11 },
+        { x: 5.5, y: 0.11 },
+      ]
+    bottom: { c: 1.8 }
+    top: { c: 2.7 }
+    side_material: fps-kit.wall-blue-grid
+    top_material: fps-kit.wall-blue-grid
+    bottom_material: fps-kit.wall-blue-grid
+  - id: sample-wall-blue-panel
+    footprint:
+      [
+        { x: 6.5, y: 0.04 },
+        { x: 7.4, y: 0.04 },
+        { x: 7.4, y: 0.11 },
+        { x: 6.5, y: 0.11 },
+      ]
+    bottom: { c: 1.8 }
+    top: { c: 2.7 }
+    side_material: fps-kit.wall-blue-panel
+    top_material: fps-kit.wall-blue-panel
+    bottom_material: fps-kit.wall-blue-panel
+  - id: sample-wall-blue-checker
+    footprint:
+      [
+        { x: 7.5, y: 0.04 },
+        { x: 8.4, y: 0.04 },
+        { x: 8.4, y: 0.11 },
+        { x: 7.5, y: 0.11 },
+      ]
+    bottom: { c: 1.8 }
+    top: { c: 2.7 }
+    side_material: fps-kit.wall-blue-checker
+    top_material: fps-kit.wall-blue-checker
+    bottom_material: fps-kit.wall-blue-checker
+  - id: sample-wall-yellow-grid
+    footprint:
+      [
+        { x: 8.5, y: 0.04 },
+        { x: 9.4, y: 0.04 },
+        { x: 9.4, y: 0.11 },
+        { x: 8.5, y: 0.11 },
+      ]
+    bottom: { c: 1.8 }
+    top: { c: 2.7 }
+    side_material: fps-kit.wall-yellow-grid
+    top_material: fps-kit.wall-yellow-grid
+    bottom_material: fps-kit.wall-yellow-grid
+  - id: sample-wall-yellow-panel
+    footprint:
+      [
+        { x: 9.5, y: 0.04 },
+        { x: 10.4, y: 0.04 },
+        { x: 10.4, y: 0.11 },
+        { x: 9.5, y: 0.11 },
+      ]
+    bottom: { c: 1.8 }
+    top: { c: 2.7 }
+    side_material: fps-kit.wall-yellow-panel
+    top_material: fps-kit.wall-yellow-panel
+    bottom_material: fps-kit.wall-yellow-panel
+  - id: sample-wall-yellow-checker
+    footprint:
+      [
+        { x: 10.5, y: 0.04 },
+        { x: 11.4, y: 0.04 },
+        { x: 11.4, y: 0.11 },
+        { x: 10.5, y: 0.11 },
+      ]
+    bottom: { c: 1.8 }
+    top: { c: 2.7 }
+    side_material: fps-kit.wall-yellow-checker
+    top_material: fps-kit.wall-yellow-checker
+    bottom_material: fps-kit.wall-yellow-checker
+  - id: sample-wall-green-grid
+    footprint:
+      [
+        { x: 13.89, y: 0.5 },
+        { x: 13.96, y: 0.5 },
+        { x: 13.96, y: 1.4 },
+        { x: 13.89, y: 1.4 },
+      ]
+    bottom: { c: 1.8 }
+    top: { c: 2.7 }
+    side_material: fps-kit.wall-green-grid
+    top_material: fps-kit.wall-green-grid
+    bottom_material: fps-kit.wall-green-grid
+  - id: sample-wall-green-panel
+    footprint:
+      [
+        { x: 13.89, y: 1.5 },
+        { x: 13.96, y: 1.5 },
+        { x: 13.96, y: 2.4 },
+        { x: 13.89, y: 2.4 },
+      ]
+    bottom: { c: 1.8 }
+    top: { c: 2.7 }
+    side_material: fps-kit.wall-green-panel
+    top_material: fps-kit.wall-green-panel
+    bottom_material: fps-kit.wall-green-panel
+  - id: sample-wall-green-checker
+    footprint:
+      [
+        { x: 13.89, y: 2.5 },
+        { x: 13.96, y: 2.5 },
+        { x: 13.96, y: 3.4 },
+        { x: 13.89, y: 3.4 },
+      ]
+    bottom: { c: 1.8 }
+    top: { c: 2.7 }
+    side_material: fps-kit.wall-green-checker
+    top_material: fps-kit.wall-green-checker
+    bottom_material: fps-kit.wall-green-checker
+  - id: sample-wall-white-grid
+    footprint:
+      [
+        { x: 13.89, y: 3.5 },
+        { x: 13.96, y: 3.5 },
+        { x: 13.96, y: 4.4 },
+        { x: 13.89, y: 4.4 },
+      ]
+    bottom: { c: 1.8 }
+    top: { c: 2.7 }
+    side_material: fps-kit.wall-white-grid
+    top_material: fps-kit.wall-white-grid
+    bottom_material: fps-kit.wall-white-grid
+  - id: sample-wall-white-checker
+    footprint:
+      [
+        { x: 13.89, y: 4.5 },
+        { x: 13.96, y: 4.5 },
+        { x: 13.96, y: 5.4 },
+        { x: 13.89, y: 5.4 },
+      ]
+    bottom: { c: 1.8 }
+    top: { c: 2.7 }
+    side_material: fps-kit.wall-white-checker
+    top_material: fps-kit.wall-white-checker
+    bottom_material: fps-kit.wall-white-checker
+  - id: sample-wall-purple-grid
+    footprint:
+      [
+        { x: 13.89, y: 5.5 },
+        { x: 13.96, y: 5.5 },
+        { x: 13.96, y: 6.4 },
+        { x: 13.89, y: 6.4 },
+      ]
+    bottom: { c: 1.8 }
+    top: { c: 2.7 }
+    side_material: fps-kit.wall-purple-grid
+    top_material: fps-kit.wall-purple-grid
+    bottom_material: fps-kit.wall-purple-grid
+  - id: sample-wall-purple-panel
+    footprint:
+      [
+        { x: 13.89, y: 6.5 },
+        { x: 13.96, y: 6.5 },
+        { x: 13.96, y: 7.4 },
+        { x: 13.89, y: 7.4 },
+      ]
+    bottom: { c: 1.8 }
+    top: { c: 2.7 }
+    side_material: fps-kit.wall-purple-panel
+    top_material: fps-kit.wall-purple-panel
+    bottom_material: fps-kit.wall-purple-panel
+  - id: sample-wall-purple-checker
+    footprint:
+      [
+        { x: 13.89, y: 7.5 },
+        { x: 13.96, y: 7.5 },
+        { x: 13.96, y: 8.4 },
+        { x: 13.89, y: 8.4 },
+      ]
+    bottom: { c: 1.8 }
+    top: { c: 2.7 }
+    side_material: fps-kit.wall-purple-checker
+    top_material: fps-kit.wall-purple-checker
+    bottom_material: fps-kit.wall-purple-checker
+  - id: sample-wall-orange-brick
+    footprint:
+      [
+        { x: 13.89, y: 8.5 },
+        { x: 13.96, y: 8.5 },
+        { x: 13.96, y: 9.4 },
+        { x: 13.89, y: 9.4 },
+      ]
+    bottom: { c: 1.8 }
+    top: { c: 2.7 }
+    side_material: fps-kit.wall-orange-brick
+    top_material: fps-kit.wall-orange-brick
+    bottom_material: fps-kit.wall-orange-brick
+  - id: sample-wall-orange-concrete
+    footprint:
+      [
+        { x: 13.89, y: 9.5 },
+        { x: 13.96, y: 9.5 },
+        { x: 13.96, y: 10.4 },
+        { x: 13.89, y: 10.4 },
+      ]
+    bottom: { c: 1.8 }
+    top: { c: 2.7 }
+    side_material: fps-kit.wall-orange-concrete
+    top_material: fps-kit.wall-orange-concrete
+    bottom_material: fps-kit.wall-orange-concrete
+  - id: sample-wall-red-brick
+    footprint:
+      [
+        { x: 13.89, y: 10.5 },
+        { x: 13.96, y: 10.5 },
+        { x: 13.96, y: 11.4 },
+        { x: 13.89, y: 11.4 },
+      ]
+    bottom: { c: 1.8 }
+    top: { c: 2.7 }
+    side_material: fps-kit.wall-red-brick
+    top_material: fps-kit.wall-red-brick
+    bottom_material: fps-kit.wall-red-brick
+  - id: sample-wall-red-concrete
+    footprint:
+      [
+        { x: 12.1, y: 13.89 },
+        { x: 13, y: 13.89 },
+        { x: 13, y: 13.96 },
+        { x: 12.1, y: 13.96 },
+      ]
+    bottom: { c: 1.8 }
+    top: { c: 2.7 }
+    side_material: fps-kit.wall-red-concrete
+    top_material: fps-kit.wall-red-concrete
+    bottom_material: fps-kit.wall-red-concrete
+  - id: sample-wall-blue-brick
+    footprint:
+      [
+        { x: 11.1, y: 13.89 },
+        { x: 12, y: 13.89 },
+        { x: 12, y: 13.96 },
+        { x: 11.1, y: 13.96 },
+      ]
+    bottom: { c: 1.8 }
+    top: { c: 2.7 }
+    side_material: fps-kit.wall-blue-brick
+    top_material: fps-kit.wall-blue-brick
+    bottom_material: fps-kit.wall-blue-brick
+  - id: sample-wall-yellow-brick
+    footprint:
+      [
+        { x: 10.1, y: 13.89 },
+        { x: 11, y: 13.89 },
+        { x: 11, y: 13.96 },
+        { x: 10.1, y: 13.96 },
+      ]
+    bottom: { c: 1.8 }
+    top: { c: 2.7 }
+    side_material: fps-kit.wall-yellow-brick
+    top_material: fps-kit.wall-yellow-brick
+    bottom_material: fps-kit.wall-yellow-brick
+  - id: sample-wall-yellow-concrete
+    footprint:
+      [
+        { x: 9.1, y: 13.89 },
+        { x: 10, y: 13.89 },
+        { x: 10, y: 13.96 },
+        { x: 9.1, y: 13.96 },
+      ]
+    bottom: { c: 1.8 }
+    top: { c: 2.7 }
+    side_material: fps-kit.wall-yellow-concrete
+    top_material: fps-kit.wall-yellow-concrete
+    bottom_material: fps-kit.wall-yellow-concrete
+  - id: sample-wall-green-brick
+    footprint:
+      [
+        { x: 8.1, y: 13.89 },
+        { x: 9, y: 13.89 },
+        { x: 9, y: 13.96 },
+        { x: 8.1, y: 13.96 },
+      ]
+    bottom: { c: 1.8 }
+    top: { c: 2.7 }
+    side_material: fps-kit.wall-green-brick
+    top_material: fps-kit.wall-green-brick
+    bottom_material: fps-kit.wall-green-brick
+  - id: sample-wall-green-concrete
+    footprint:
+      [
+        { x: 7.1, y: 13.89 },
+        { x: 8, y: 13.89 },
+        { x: 8, y: 13.96 },
+        { x: 7.1, y: 13.96 },
+      ]
+    bottom: { c: 1.8 }
+    top: { c: 2.7 }
+    side_material: fps-kit.wall-green-concrete
+    top_material: fps-kit.wall-green-concrete
+    bottom_material: fps-kit.wall-green-concrete
+  - id: sample-wall-white-brick
+    footprint:
+      [
+        { x: 6.1, y: 13.89 },
+        { x: 7, y: 13.89 },
+        { x: 7, y: 13.96 },
+        { x: 6.1, y: 13.96 },
+      ]
+    bottom: { c: 1.8 }
+    top: { c: 2.7 }
+    side_material: fps-kit.wall-white-brick
+    top_material: fps-kit.wall-white-brick
+    bottom_material: fps-kit.wall-white-brick
+  - id: sample-wall-white-concrete
+    footprint:
+      [
+        { x: 5.1, y: 13.89 },
+        { x: 6, y: 13.89 },
+        { x: 6, y: 13.96 },
+        { x: 5.1, y: 13.96 },
+      ]
+    bottom: { c: 1.8 }
+    top: { c: 2.7 }
+    side_material: fps-kit.wall-white-concrete
+    top_material: fps-kit.wall-white-concrete
+    bottom_material: fps-kit.wall-white-concrete
+  - id: sample-wall-purple-brick
+    footprint:
+      [
+        { x: 4.1, y: 13.89 },
+        { x: 5, y: 13.89 },
+        { x: 5, y: 13.96 },
+        { x: 4.1, y: 13.96 },
+      ]
+    bottom: { c: 1.8 }
+    top: { c: 2.7 }
+    side_material: fps-kit.wall-purple-brick
+    top_material: fps-kit.wall-purple-brick
+    bottom_material: fps-kit.wall-purple-brick
+  - id: sample-wall-purple-concrete
+    footprint:
+      [
+        { x: 3.1, y: 13.89 },
+        { x: 4, y: 13.89 },
+        { x: 4, y: 13.96 },
+        { x: 3.1, y: 13.96 },
+      ]
+    bottom: { c: 1.8 }
+    top: { c: 2.7 }
+    side_material: fps-kit.wall-purple-concrete
+    top_material: fps-kit.wall-purple-concrete
+    bottom_material: fps-kit.wall-purple-concrete
+  - id: sample-wall-concrete
+    footprint:
+      [
+        { x: 2.1, y: 13.89 },
+        { x: 3, y: 13.89 },
+        { x: 3, y: 13.96 },
+        { x: 2.1, y: 13.96 },
+      ]
+    bottom: { c: 1.8 }
+    top: { c: 2.7 }
+    side_material: fps-kit.wall-concrete
+    top_material: fps-kit.wall-concrete
+    bottom_material: fps-kit.wall-concrete
+
+# Local renderer wrappers select the package geometry for runtime spawning.
+# Package format 1 follows nested instance references during export resolution.
+prefabs:
+  - id: crate-small-dynamic
+    renderable: true
+    instances:
+      - id: shape
+        prefab: fps-kit.crate-small-dynamic
+  - id: crate-medium-dynamic
+    renderable: true
+    instances:
+      - id: shape
+        prefab: fps-kit.crate-medium-dynamic
+  - id: crate-large-dynamic
+    renderable: true
+    instances:
+      - id: shape
+        prefab: fps-kit.crate-large-dynamic
+  - id: crate-long-dynamic
+    renderable: true
+    instances:
+      - id: shape
+        prefab: fps-kit.crate-long-dynamic
+  - id: crate-tall-dynamic
+    renderable: true
+    instances:
+      - id: shape
+        prefab: fps-kit.crate-tall-dynamic

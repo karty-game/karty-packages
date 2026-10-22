@@ -5,41 +5,60 @@ uv = "0.13.2"
 yamllint = { version = "1.38.0", uvx = true }
 prettier = "3.9.10"
 golangci-lint = "2.15.0"
-goreleaser = "2.18.3"
 go = "1.27.3"
 node = "26.12.0"
 
-# Required by the public SDK offline baker on Go 1.27.
 [env]
+GOWORK = "off"
+GOMAXPROCS = "2"
 GOEXPERIMENT = "simd"
 
 [hooks]
 postinstall = "hk install --mise"
 
-[shell_alias]
-karty = "{{config_root}}/dist/karty"
-fmt = "mise run fmt"
-lint = "mise run lint"
-test = "mise run test"
+[tasks.test-tools]
+description = "Test independent archive, release and catalog tooling"
+run = "go test -count=1 -timeout=9s ./..."
 
-# Keep everyday commands here; focused tasks live under tasks/.
-[task_config]
-includes = ["tasks/*.toml", "tasks/samples/*.toml"]
+[tasks.test-packages]
+description = "Test every code package using its own module"
+run = '''
+for module in packages/*/go.mod; do
+  go -C "${module%/go.mod}" test -count=1 -timeout=9s ./...
+done
+'''
 
 [tasks.test]
-depends = ["generate-hangar-ceiling-lights"]
-run = ["go run ./cmd/karty-release --check", "go run ./cmd/karty-test-sdk", "bash scripts/test.sh"]
-
-[tasks.test-unit]
-description = "Run unit tests without the published SDK download check"
-depends = ["generate-hangar-ceiling-lights"]
-run = "bash scripts/test.sh"
+run = ["mise run test-tools", "mise run test-packages"]
 
 [tasks.build]
-run = "go build -o dist/karty ./cmd/karty"
+description = "Build package release tooling without the Karty CLI or SDK"
+run = [
+  "go build -o dist/karty-package ./cmd/karty-package",
+  "go build -o dist/karty-catalog ./cmd/karty-catalog",
+  "go build -o dist/karty-release ./cmd/karty-release",
+]
 
-[tasks.check]
-run = ["mise run check-fmt", "mise run lint", "mise run test", "mise run build"]
+[tasks.check-packages]
+run = '''
+for manifest in packages/*/karty-package.toml; do
+  package_name="$(basename "${manifest%/karty-package.toml}")"
+  go run ./cmd/karty-package check "$package_name"
+done
+'''
+
+[tasks.package]
+description = "Export one package: mise run package -- fps-kit"
+run = "go run ./cmd/karty-package pack --output dist/releases"
+
+[tasks.generate-fps-kit]
+run = "go run scripts/fps-kit/generate.go scripts/fps-kit/decals.go"
+
+[tasks.check-generated]
+run = "go run scripts/fps-kit/generate.go scripts/fps-kit/decals.go --check"
+
+[tasks.catalog]
+run = "go run ./cmd/karty-catalog --repository karty-game/karty-packages --releases dist/releases.json --output dist/catalog"
 
 [tasks.fmt]
 run = "hk fix --all --profile format"
@@ -47,16 +66,26 @@ run = "hk fix --all --profile format"
 [tasks.check-fmt]
 run = "hk check --all --profile format"
 
-[tasks.install-browser]
-run = ["npm ci --ignore-scripts", "npx playwright install chromium --only-shell"]
+[tasks.lint-go]
+run = '''
+go vet ./...
+for module in packages/*/go.mod; do
+  go -C "${module%/go.mod}" vet ./...
+done
+'''
 
 [tasks.lint]
 run = "hk check --all"
 
-[tasks.lint-go]
-description = "Lint CLI and website Go packages, excluding ignored build output"
-run = "golangci-lint run ./cmd/... ./internal/... ./skills/... ./website/..."
+[tasks.check]
+run = [
+  "mise run check-fmt",
+  "mise run lint",
+  "mise run test",
+  "mise run check-generated",
+  "mise run check-packages",
+  "mise run build",
+]
 
 [tasks.install-hooks]
-description = "Install repository hk hooks with the pinned mise environment"
 run = "hk install --mise"

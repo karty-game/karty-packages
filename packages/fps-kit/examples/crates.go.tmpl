@@ -1,0 +1,42 @@
+// Copy to src/crates.go; replace example.com/your-game with your game's module.
+package main
+
+import "example.com/your-game/.karty/engine"
+
+// Call spawnCrates(&game.Game, event.Handle) from the FPS starter's ready hook.
+// Keep the renderer wrappers from examples/room/world.yaml in your level.
+func spawnCrates(game *engine.Game, level engine.LevelHandle) error {
+	world := game.World(level)
+	if err := world.Configure(engine.WorldSettings{
+		Mode: engine.WorldSpatial, Gravity: engine.NewVec3(0, 0, -9.81),
+	}); err != nil {
+		return err
+	}
+	for _, box := range []struct {
+		name string
+		x, y, width, depth, height, mass float32
+	}{
+		{"small", 3, 3, .5, .5, .5, 2},
+		{"medium", 5, 3, 1, 1, 1, 16},
+		{"large", 8, 3, 2, 2, 2, 64},
+		{"long", 11, 3, 2, 1, 1, 32},
+		{"tall", 12, 5, 1, 1, 2, 32},
+	} {
+		crate := game.NewSolid3D(level,
+			engine.NewTransform3D(engine.NewVec3(box.x, box.y, box.height/2+1)),
+			engine.SolidRenderer{Prefab: "crate-" + box.name + "-dynamic"})
+		settings := engine.DynamicBoxSettings()
+		settings.Collider = engine.BoxCollider{
+			HalfExtents: engine.NewVec3(box.width/2, box.depth/2, box.height/2),
+		}
+		settings.AllowRotation = true
+		settings.Mass = box.mass
+		settings.Friction = .6
+		settings.Restitution = .05
+		if _, err := world.AttachBody(crate.Ref(), settings); err != nil {
+			crate.Destroy()
+			return err
+		}
+	}
+	return nil
+}

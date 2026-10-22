@@ -1,0 +1,150 @@
+name: Release package
+on:
+  push:
+    tags: ["*-v*"]
+  workflow_dispatch:
+    inputs:
+      package:
+        description: Package to build or release
+        type: choice
+        options: [controllers, dialogue, fps-kit, savegame, tiled]
+        required: true
+      version:
+        description: Version declared by that package's manifest
+        type: string
+        required: true
+        default: "0.1.0"
+      publish:
+        description: Publish after validation; false saves candidate artifacts only
+        type: boolean
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: package-release-${{ inputs.package || github.ref_name }}
+  cancel-in-progress: false
+env:
+  GOWORK: "off"
+  GOMAXPROCS: "2"
+jobs:
+  prepare:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      package: ${{ steps.select.outputs.package }}
+      version: ${{ steps.select.outputs.version }}
+      tag: ${{ steps.select.outputs.tag }}
+      archive: ${{ steps.select.outputs.archive }}
+      commit: ${{ steps.select.outputs.commit }}
+      prerelease: ${{ steps.select.outputs.prerelease }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: jdx/mise-action@v4
+      - run: mise run test-tools
+      - name: Verify package version and source commit
+        id: select
+        env:
+          PACKAGE_NAME: ${{ inputs.package }}
+          PACKAGE_VERSION: ${{ inputs.version }}
+        run: go run ./cmd/karty-release
+  package:
+    needs: prepare
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      PACKAGE_NAME: ${{ needs.prepare.outputs.package }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.prepare.outputs.commit }}
+          persist-credentials: false
+      - uses: jdx/mise-action@v4
+      - name: Validate package sources and native Go code
+        run: |
+          go run ./cmd/karty-package check "$PACKAGE_NAME"
+          if [ "$PACKAGE_NAME" = fps-kit ]; then
+            mise run check-generated
+          fi
+          if [ -f "packages/$PACKAGE_NAME/go.mod" ]; then
+            go -C "packages/$PACKAGE_NAME" test -count=1 -timeout=9s ./...
+            go -C "packages/$PACKAGE_NAME" build ./...
+          fi
+      - name: Install the dialogue compiler SDK
+        if: needs.prepare.outputs.package == 'dialogue'
+        uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: packages/dialogue/global.json
+      - name: Validate the locked dialogue compiler
+        if: needs.prepare.outputs.package == 'dialogue'
+        working-directory: packages/dialogue
+        run: |
+          dotnet restore compiler/Compiler.csproj --locked-mode
+          dotnet build compiler/Compiler.csproj --no-restore --nologo
+      - name: Export immutable package artifacts
+        run: go run ./cmd/karty-package pack --output dist/releases --commit "$(git rev-parse HEAD)" "$PACKAGE_NAME"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ${{ needs.prepare.outputs.tag }}
+          path: dist/releases/
+          if-no-files-found: error
+  publish:
+    needs: [prepare, package]
+    if: github.event_name == 'push' || inputs.publish
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PACKAGE_TAG: ${{ needs.prepare.outputs.tag }}
+      PACKAGE_NAME: ${{ needs.prepare.outputs.package }}
+      PACKAGE_VERSION: ${{ needs.prepare.outputs.version }}
+      PACKAGE_ARCHIVE: ${{ needs.prepare.outputs.archive }}
+      SOURCE_COMMIT: ${{ needs.prepare.outputs.commit }}
+      PRERELEASE: ${{ needs.prepare.outputs.prerelease }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.prepare.outputs.commit }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/download-artifact@v8
+        with:
+          name: ${{ needs.prepare.outputs.tag }}
+          path: dist/releases
+      - name: Publish this package version
+        run: |
+          if git show-ref --verify --quiet "refs/tags/$PACKAGE_TAG"; then
+            tag_commit="$(git rev-parse "refs/tags/$PACKAGE_TAG^{commit}")"
+            if [ "$tag_commit" != "$SOURCE_COMMIT" ]; then
+              echo "Package tag no longer matches the validated source commit."
+              exit 1
+            fi
+          elif [ "$GITHUB_EVENT_NAME" = push ]; then
+            echo "The validated package tag was deleted."
+            exit 1
+          fi
+          cd dist/releases
+          sha256sum --check "$PACKAGE_ARCHIVE.sha256"
+          options=(--repo "$GITHUB_REPOSITORY" --target "$SOURCE_COMMIT" --latest=false)
+          if [ "$PRERELEASE" = true ]; then
+            options+=(--prerelease)
+          fi
+          gh release create "$PACKAGE_TAG" \
+            "$PACKAGE_ARCHIVE" "$PACKAGE_ARCHIVE.sha256" "$PACKAGE_NAME-$PACKAGE_VERSION.json" \
+            "${options[@]}" \
+            --title "$PACKAGE_NAME $PACKAGE_VERSION" \
+            --notes "Independent $PACKAGE_NAME package release. Verify the archive using the attached SHA-256 checksum."
+  catalog:
+    needs: publish
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/catalog.yml
+    with:
+      deploy: ${{ vars.PACKAGE_CATALOG_PAGES == 'true' }}
