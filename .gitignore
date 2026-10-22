@@ -1,0 +1,39 @@
+# Keep module boundaries so Go excludes generated output and scratch sources.
+**/dist/*
+!/dist/go.mod
+**/tmp/*
+!/tmp/go.mod
+node_modules/
+test-results/
+.vscode/mise-tools/
+.DS_Store
+Thumbs.db
+
+# Local contributor overrides
+go.work
+go.work.sum
+
+# Generated project state and local agent configuration
+.karty/
+.codex/
+.agents/
+
+# Local investigations and review notes. Public documentation lives in website/.
+/docs/
+/spike/
+/spikes/*
+!/spikes/go.mod
+/concept-art/
+/website/validation/
+/scripts/stdlib-spike.sh
+
+# Per-level copies generated from the reusable Particle Lab asset library.
+samples/particle-lab/levels/*/textures/
+samples/hangar/levels/hangar/textures/effects/
+samples/particle-lab/effects/textures/lab-*.png
+samples/particle-lab/effects/textures/room-*.png
+samples/particle-lab/effects/textures/smoke-room-*.png
+samples/particle-lab/effects/library.yaml
+samples/particle-lab/levels/*/world.yaml
+samples/particle-lab/levels/*/level.toml
+samples/particle-lab/preview.capture.json
