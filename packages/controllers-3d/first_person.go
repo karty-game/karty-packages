@@ -1,11 +1,8 @@
 package controllers
 
 import (
-	"errors"
 	"math"
 )
-
-var ErrOptions = errors.New("invalid controller options")
 
 // Speeds are metres/second or radians/second. Mouse sensitivity is radians/pixel.
 // Defaults match the samples' fixed 60 Hz update rate, not their draw rate.

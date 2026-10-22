@@ -2,18 +2,36 @@
   "format_version": 1,
   "packages": [
     {
-      "name": "controllers",
-      "description": "Portable movement, input and camera controllers for Karty games.",
-      "tags": ["camera", "controllers", "input", "movement"],
-      "readme": "packages/controllers/README.md",
-      "source": "packages/controllers"
+      "name": "controllers-3d",
+      "description": "Portable 3D first-person movement, mouse look and dual-stick touch controls.",
+      "tags": ["3d", "camera", "controllers", "fps", "input", "movement"],
+      "readme": "packages/controllers-3d/README.md",
+      "source": "packages/controllers-3d",
+      "preview": "packages/controllers-3d/previews/controller.jpg"
+    },
+    {
+      "name": "controllers-isometric",
+      "description": "Isometric movement, ground picking, orthographic zoom and camera framing.",
+      "tags": ["2d", "camera", "controllers", "input", "isometric", "movement"],
+      "readme": "packages/controllers-isometric/README.md",
+      "source": "packages/controllers-isometric",
+      "preview": "packages/controllers-isometric/previews/controller.jpg"
+    },
+    {
+      "name": "controllers-topdown",
+      "description": "2D top-down movement, pointer targets, zoom and camera framing.",
+      "tags": ["2d", "camera", "controllers", "input", "movement", "topdown"],
+      "readme": "packages/controllers-topdown/README.md",
+      "source": "packages/controllers-topdown",
+      "preview": "packages/controllers-topdown/previews/controller.jpg"
     },
     {
       "name": "dialogue",
       "description": "Yarn Spinner compilation, portable story execution and visual novel UI.",
       "tags": ["dialogue", "narrative", "ui", "yarn"],
       "readme": "packages/dialogue/README.md",
-      "source": "packages/dialogue"
+      "source": "packages/dialogue",
+      "preview": "packages/dialogue/previews/dialogue.png"
     },
     {
       "name": "fps-kit",

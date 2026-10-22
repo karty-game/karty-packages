@@ -13,6 +13,10 @@ GOWORK = "off"
 GOMAXPROCS = "2"
 GOEXPERIMENT = "simd"
 
+[shell_alias]
+fmt = "mise run fmt"
+lint = "mise run lint"
+
 [hooks]
 postinstall = "hk install --mise"
 

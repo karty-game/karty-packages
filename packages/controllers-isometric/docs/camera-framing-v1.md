@@ -1,7 +1,7 @@
 # Camera framing v1
 
-Status: additive local-source extension to controllers 0.1.0. No public module
-release, engine API change or wire change is implied.
+Status: implemented in `controllers-isometric` 0.0.1. No engine API or wire change
+is implied.
 
 `CameraComposer` owns the tracking history for one shot. It has no engine
 imports, target/entity ownership, automatic updates or rendering resources.
@@ -25,8 +25,8 @@ DeadZone follows continuously; zero SoftZone locks framing immediately.
 
 Lookahead estimates velocity from successive accepted target positions, filters
 it with LookaheadDamping (another half-life), multiplies by LookaheadTime and
-caps the vector length to MaxLookahead. The cap uses camera-plane world units:
-pixels for an unscaled 2D map and projected metres for a fixed isometric view.
+caps the vector length to MaxLookahead. The cap uses camera-plane world units: projected metres for a fixed
+isometric view.
 Use zero LookaheadTime or MaxLookahead to disable anticipation. Never feed
 unaccepted movement proposals or sprite-animation offsets into the target.
 
@@ -52,7 +52,6 @@ establish arbitrary-aspect framing guarantees. A caller with viewport informatio
 can supply the corresponding visible rectangle instead. Re-evaluate after zoom
 or size changes; visible extents are not cached.
 
-This first version implements target composition for 2D and fixed isometric
-views. It does not add confinement, occlusion, collision avoidance, perspective
+This version implements target composition for fixed isometric views. It does not add confinement, occlusion, collision avoidance, perspective
 tracking, target groups, virtual-shot selection/blends, shake or render-rate
 interpolation. Games retain their current geometry, sight and input policies.

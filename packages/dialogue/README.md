@@ -1,5 +1,7 @@
 # Dialogue for Karty
 
+![Writing a Yarn Spinner script with dialogue lines and branching choices](previews/dialogue.png)
+
 One package for authored Yarn dialogue, portable story execution and a ready-made
 visual novel interface. Install `dialogue` once; it includes the compiler, runtime,
 presentation model, choices, history and responsive layout. No separate `yarn`

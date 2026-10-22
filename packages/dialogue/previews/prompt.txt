@@ -1,0 +1,17 @@
+Use case: stylized-concept.
+Asset type: landscape 16:9 catalog preview for Karty's Dialogue code package.
+Primary request: make it immediately clear this is about WRITING TEXT for interactive game dialogue, using the Yarn Spinner library. An understated editorial software illustration, grounded in actual plain-text Yarn scripts, not a fantasy game scene.
+Composition: full-bleed dark ink/navy background. One large flat text-editor document occupies most of the image, slightly offset but facing straight forward so its writing is clear. A smaller pair of branching dialogue option cards to the right hints that authored lines become player choices. Clean restrained geometry, a few coral and pale cream accents, generous space, crisp legible monospaced script, subtle paper/editor depth, no photoreal 3D.
+Exact text at top: "DIALOGUE". Small clear library credit label: "Yarn Spinner". File tab: "story.yarn".
+The editor must show this exact short valid script, with line breaks, indentation and basic syntax coloring:
+title: Start
+---
+Mara: A ticket is missing.
+-> Inspect the envelope.
+    Iris: You noticed the seal.
+-> Leave it alone.
+    Elias: Some journeys stay private.
+===
+A subtle text caret and one highlighted writing line make authoring feel active.
+The two small option cards repeat only "Inspect the envelope." and "Leave it alone." connected from a simple dialogue-line block; the code manuscript is the main subject.
+Constraints: illustration of text authoring only, no implied Karty visual editor product, no environment, no game characters, no landscapes, no decorative yarn balls or knitting, no unrelated logos, no fake official Yarn Spinner logo, no watermark. Keep critical text inside central 80% for thumbnail cropping.

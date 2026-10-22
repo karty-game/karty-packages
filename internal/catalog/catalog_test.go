@@ -3,6 +3,7 @@ package catalog
 import (
 	"encoding/json"
 	"fmt"
+	"image/jpeg"
 	"net/url"
 	"os"
 	"reflect"
@@ -67,7 +68,7 @@ func TestUnreleasedCatalog(t *testing.T) {
 			t.Fatal(entry.Source)
 		}
 	}
-	if !reflect.DeepEqual(names, []string{"controllers", "dialogue", "fps-kit", "savegame", "tiled"}) {
+	if !reflect.DeepEqual(names, []string{"controllers-3d", "controllers-isometric", "controllers-topdown", "dialogue", "fps-kit", "savegame", "tiled"}) {
 		t.Fatal(names)
 	}
 	encoded, err := json.Marshal(master)
@@ -79,6 +80,39 @@ func TestUnreleasedCatalog(t *testing.T) {
 	}
 	if packageByName(t, master, "fps-kit").Preview != "https://raw.githubusercontent.com/"+testRepository+"/main/packages/fps-kit/screenshots/materials.png" {
 		t.Fatal("missing preview")
+	}
+}
+
+func TestControllerPackagesReleaseIndependently(t *testing.T) {
+	names := []string{"controllers-3d", "controllers-isometric", "controllers-topdown"}
+	// A historical combined release must never become a split package's version.
+	releases := []*release{fixtureRelease("controllers", "9.0.0"), fixtureRelease(names[0], "0.0.1"), fixtureRelease(names[1], "0.0.2")}
+	master, err := buildFixture(t, releases, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for i, name := range names {
+		entry := packageByName(t, master, name)
+		if i == 2 {
+			if entry.Latest != nil || len(entry.Versions) != 0 {
+				t.Fatal("unreleased controller inherited a version", entry)
+			}
+		} else if entry.Latest == nil || *entry.Latest != fmt.Sprintf("0.0.%d", i+1) || len(entry.Versions) != 1 {
+			t.Fatal("controller release mixed with another package", entry)
+		}
+		path := "packages/" + name + "/previews/controller.jpg"
+		if entry.Preview != "https://raw.githubusercontent.com/"+testRepository+"/main/"+path {
+			t.Fatal("missing controller preview", entry.Preview)
+		}
+		preview, err := os.Open("../../" + path)
+		if err != nil {
+			t.Fatal(err)
+		}
+		config, decodeErr := jpeg.DecodeConfig(preview)
+		closeErr := preview.Close()
+		if decodeErr != nil || closeErr != nil || config.Width < 1 || config.Width*9 != config.Height*16 {
+			t.Fatalf("invalid landscape preview for %s: %+v, %v, %v", name, config, decodeErr, closeErr)
+		}
 	}
 }
 

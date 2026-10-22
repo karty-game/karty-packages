@@ -1,4 +1,4 @@
-// Package controllers provides first-person, top-down 2D and isometric presets.
+// Package controllers provides portable isometric movement, ground picking and camera framing.
 // Games route input and apply the returned motion through their own SDK bindings.
 package controllers
 

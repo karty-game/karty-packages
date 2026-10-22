@@ -5,8 +5,7 @@ import "math"
 type Vec2 struct{ X, Y float64 }
 type Vec3 struct{ X, Y, Z float64 }
 
-// PlanarOptions selects movement basis and following-camera behavior. A yaw and
-// pitch of zero selects top-down screen axes; isometric uses camera-relative axes.
+// PlanarOptions selects camera-relative movement and fixed isometric projection.
 type PlanarOptions struct {
 	Speed, RunSpeed, FollowRate float64
 	FollowOffset                Vec2
@@ -16,29 +15,23 @@ type PlanarOptions struct {
 	TargetTolerance             float64
 }
 
-func DefaultTopDown2DOptions() PlanarOptions {
-	return PlanarOptions{Speed: 108.8, RunSpeed: 176, FollowRate: .12, Zoom: 1, MinZoom: .25, MaxZoom: 4, TargetTolerance: .5}
-}
-
 func DefaultIsometricOptions() PlanarOptions {
 	return PlanarOptions{Speed: 4, RunSpeed: 5.2, FollowRate: .15, CameraOffset: Vec3{-18, -18, 14.696938},
 		Yaw: math.Pi / 4, Pitch: -math.Pi / 6, Zoom: 13.2, MinZoom: 10, MaxZoom: 22, TargetTolerance: .01}
 }
 
-// Planar is returned by both presets. Collision, navigation and animation remain
-// game-owned. Step returns a proposal; Follow must receive the accepted position.
+// Planar owns movement and following-camera state. Collision, navigation and
+// animation remain game-owned. Step proposes movement; Follow uses accepted positions.
 type Planar struct {
 	Input
-	options   PlanarOptions
-	isometric bool
-	target    Vec2
-	targeted  bool
+	options  PlanarOptions
+	target   Vec2
+	targeted bool
 }
 
-func NewTopDown2D(o PlanarOptions) (*Planar, error) { return newPlanar(o, false) }
-func NewIsometric(o PlanarOptions) (*Planar, error) { return newPlanar(o, true) }
-func newPlanar(o PlanarOptions, iso bool) (*Planar, error) {
-	c := &Planar{isometric: iso}
+func NewIsometric(o PlanarOptions) (*Planar, error) { return newPlanar(o) }
+func newPlanar(o PlanarOptions) (*Planar, error) {
+	c := &Planar{}
 	if err := c.Configure(o); err != nil {
 		return nil, err
 	}
@@ -56,7 +49,7 @@ func (c *Planar) Configure(o PlanarOptions) error {
 		o.Zoom < o.MinZoom ||
 		o.Zoom > o.MaxZoom ||
 		o.TargetTolerance < 0 ||
-		c.isometric && (o.Pitch >= 0 || o.Pitch <= -math.Pi/2) {
+		(o.Pitch >= 0 || o.Pitch <= -math.Pi/2) {
 		return ErrOptions
 	}
 	c.options = o
@@ -94,10 +87,8 @@ func (c *Planar) Step(accepted Vec2) Vec2 {
 	if length > 0 {
 		c.CancelTarget()
 		step *= min(1, length)
-		if c.isometric {
-			sine, cosine := math.Sin(c.options.Yaw), math.Cos(c.options.Yaw)
-			d = Vec2{d.X*cosine - d.Y*sine, -d.X*sine - d.Y*cosine}
-		}
+		sine, cosine := math.Sin(c.options.Yaw), math.Cos(c.options.Yaw)
+		d = Vec2{d.X*cosine - d.Y*sine, -d.X*sine - d.Y*cosine}
 	} else if c.targeted {
 		d = Vec2{c.target.X - accepted.X, c.target.Y - accepted.Y}
 		length = math.Hypot(d.X, d.Y)
@@ -127,7 +118,7 @@ func (c *Planar) CameraPosition(focus Vec2) Vec3 {
 	return Vec3{focus.X + o.X, focus.Y + o.Y, o.Z}
 }
 
-// ZoomBy uses a scale for top-down 2D and orthographic height for isometric.
+// ZoomBy scales the orthographic height within the configured bounds.
 func (c *Planar) ZoomBy(factor float64) float64 {
 	if finite(factor) && factor > 0 {
 		c.options.Zoom = max(c.options.MinZoom, min(c.options.MaxZoom, c.options.Zoom*factor))
@@ -143,9 +134,6 @@ func (c *Planar) ScreenToGround(screen, focus Vec2, width, height float64) (Vec2
 		return Vec2{}, false
 	}
 	dx, dy := screen.X-width/2, screen.Y-height/2
-	if !c.isometric {
-		return Vec2{focus.X + dx/c.options.Zoom, focus.Y + dy/c.options.Zoom}, true
-	}
 	scale := c.options.Zoom / height
 	dx *= scale
 	dy *= -scale / math.Sin(-c.options.Pitch)

@@ -7,7 +7,16 @@ on:
       package:
         description: Package to build or release
         type: choice
-        options: [controllers, dialogue, fps-kit, savegame, tiled]
+        options:
+          [
+            controllers-3d,
+            controllers-isometric,
+            controllers-topdown,
+            dialogue,
+            fps-kit,
+            savegame,
+            tiled,
+          ]
         required: true
       version:
         description: Version declared by that package's manifest
