@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#111827" />
+    <meta name="description" content="{{.Description}}" />
+    <title>{{.Title}} / Karty Packages</title>
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="{{.Prefix}}assets/favicon.svg"
+    />
+    <link rel="stylesheet" href="{{.Prefix}}assets/theme.css" />
+    <script src="{{.Prefix}}assets/catalog.js" defer></script>
+  </head>
+  <body class="{{if .Package}}package-page{{else}}catalog-page{{end}}">
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site-header">
+      <div class="header-inner">
+        <a
+          class="brand"
+          href="{{.Prefix}}index.html"
+          aria-label="Karty packages"
+        >
+          <img
+            src="{{.Prefix}}assets/favicon.svg"
+            alt=""
+            width="44"
+            height="44"
+          />
+          <span>Karty</span>
+        </a>
+        <nav class="site-nav" aria-label="Main navigation">
+          <a href="https://karty-game.github.io/karty/main/">Samples</a>
+          <a href="https://karty-game.github.io/karty/main/guide/">Guides</a>
+          <a href="https://karty-game.github.io/karty/main/technical/">API</a>
+          <a href="{{.Prefix}}index.html" aria-current="page">Packages</a>
+          <a class="github" href="https://github.com/{{.Repository}}"
+            >GitHub ↗</a
+          >
+        </nav>
+      </div>
+    </header>
+    {{if .Package}}
+    <div class="package-layout">
+      <main id="main" class="package-main">
+        <a class="breadcrumb" href="../index.html">← All packages</a>
+        {{with .Package}}
+        <div class="package-hero">
+          <span class="eyebrow">Karty package</span>
+          <h1>{{.DisplayName}}</h1>
+          <p class="lead">{{.Description}}</p>
+          <div class="package-meta">
+            {{if .Latest}}<span class="version-badge">v{{.Latest}}</span
+            >{{else}}<span class="unreleased-badge">Coming soon</span>{{end}}
+            <span>{{.Repository}}</span>
+          </div>
+          <div class="tags" aria-label="Package tags">
+            {{range .Tags}}<a
+              class="tag"
+              href="../index.html?tag={{tagQuery .}}"
+              >{{.}}</a
+            >{{end}}
+          </div>
+        </div>
+        {{if .Preview}}
+        <div class="detail-preview">
+          <img
+            class="preview-image"
+            src="{{.Preview}}"
+            alt="{{.DisplayName}} in use"
+            loading="lazy"
+            referrerpolicy="no-referrer"
+          />
+          <div class="card-placeholder" hidden>
+            <span class="package-symbol">{{.Initials}}</span>
+          </div>
+        </div>
+        {{end}}
+        <section class="panel install-panel" aria-labelledby="install-heading">
+          <div class="section-heading">
+            <h2 id="install-heading">
+              Install{{if .Latest}} v{{.Latest}}{{end}}
+            </h2>
+            {{if .Latest}}<button
+              type="button"
+              class="copy-button"
+              data-copy="install-latest"
+              data-enhanced
+              hidden
+            >
+              Copy command</button
+            >{{end}}
+          </div>
+          {{if .Latest}}
+          <p>
+            Run from your Karty project directory. The download is verified
+            before import.
+          </p>
+          <pre
+            class="command-block"
+          ><code id="install-latest">{{.Command}}</code></pre>
+          <p class="copy-status" role="status" aria-live="polite"></p>
+          <p class="hint">
+            Updating an existing package? Add <code>--replace</code> to the
+            import command.
+          </p>
+          {{else}}
+          <p>
+            No published release yet. Installation commands will appear here
+            when a release is available.
+          </p>
+          {{end}}
+        </section>
+        <section class="panel" aria-labelledby="versions-heading">
+          <div class="section-heading">
+            <h2 id="versions-heading">Versions</h2>
+            <span class="muted">{{len .ReleaseVersions}} published</span>
+          </div>
+          {{if .ReleaseVersions}}
+          <div class="table-scroll">
+            <table class="version-table">
+              <thead>
+                <tr>
+                  <th scope="col">Version</th>
+                  <th scope="col">SHA-256</th>
+                  <th scope="col">Archive</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{range .ReleaseVersions}}
+                <tr>
+                  <td><a href="{{.ReleaseURL}}">v{{.Version.Version}}</a></td>
+                  <td>
+                    <code title="{{.SHA256}}">{{shortHash .SHA256}}…</code>
+                  </td>
+                  <td><a href="{{.Archive}}">Download ↗</a></td>
+                </tr>
+                <tr>
+                  <td colspan="3">
+                    <details class="version-install">
+                      <summary>Install v{{.Version.Version}}</summary>
+                      <button
+                        type="button"
+                        class="copy-button"
+                        data-copy="{{.ID}}"
+                        data-enhanced
+                        hidden
+                      >
+                        Copy command
+                      </button>
+                      <pre
+                        class="command-block"
+                      ><code id="{{.ID}}">{{.Command}}</code></pre>
+                      <p
+                        class="copy-status"
+                        role="status"
+                        aria-live="polite"
+                      ></p>
+                    </details>
+                  </td>
+                </tr>
+                {{end}}
+              </tbody>
+            </table>
+          </div>
+          {{else}}
+          <p>No published versions.</p>
+          {{end}}
+        </section>
+        {{end}}
+      </main>
+      <aside class="package-aside" aria-label="Package information">
+        {{with .Package}}
+        <section class="panel">
+          <h2>About this package</h2>
+          <p>{{.Description}}</p>
+          <ul class="package-links">
+            <li><a href="{{.Readme}}">Read the README ↗</a></li>
+            <li><a href="{{.Source}}">Browse source ↗</a></li>
+            <li><a href="{{.Name}}.md" download>Download Markdown ↓</a></li>
+          </ul>
+          <p class="hint">
+            Maintained in
+            <a href="https://github.com/{{.Repository}}">{{.Repository}}</a>.
+          </p>
+        </section>
+        {{end}}
+        <a class="text-link" href="../master.json">View catalog JSON ↗</a>
+      </aside>
+    </div>
+    {{else}}
+    <div class="catalog-layout">
+      <aside class="catalog-sidebar" aria-label="Filter packages">
+        <form id="catalog-filters" data-enhanced hidden role="search">
+          <label for="package-search">Find a package</label>
+          <input
+            type="search"
+            id="package-search"
+            name="q"
+            placeholder="Search packages…"
+            autocomplete="off"
+          />
+          <div class="filter-heading">
+            <h2>Filter by tag</h2>
+            <button type="button" id="clear-filters">Clear</button>
+          </div>
+          <p class="hint">Choose tags to narrow the list.</p>
+          <div class="tag-filters">
+            {{range .Tags}}<button
+              type="button"
+              class="tag"
+              data-tag="{{.Name}}"
+              aria-pressed="false"
+            >
+              <span>{{.Name}}</span
+              ><span class="tag-count">{{.Count}}</span></button
+            >{{end}}
+          </div>
+        </form>
+        <noscript
+          ><p>
+            Browse all packages below. Enable JavaScript to search and filter.
+          </p></noscript
+        >
+        <div class="sidebar-note">
+          <p>Building something?</p>
+          <a href="https://github.com/{{.Repository}}/blob/main/README.md"
+            >Share a package ↗</a
+          >
+        </div>
+      </aside>
+      <main id="main">
+        <div class="page-intro">
+          <span class="eyebrow">The Karty toolbox</span>
+          <h1>A head start for<br />your next game.</h1>
+          <p class="lead">
+            Reusable code and assets, ready to bring into your project. Pick a
+            package and start building.
+          </p>
+          <div class="catalog-summary">
+            <span id="result-count" role="status" aria-live="polite"
+              >{{len .Packages}} packages</span
+            ><span>{{.ReadyCount}} with published releases</span
+            ><a class="text-link" href="index.md" download>Markdown ↓</a>
+          </div>
+        </div>
+        <div class="package-grid" aria-label="Packages">
+          {{range .Packages}}
+          <article
+            class="package-card"
+            data-package
+            data-search="{{.Search}}"
+            data-tags="{{join .Tags ` `}}"
+          >
+            <a
+              class="card-preview"
+              href="packages/{{.Name}}.html"
+              tabindex="-1"
+              aria-hidden="true"
+            >
+              <div class="card-placeholder" {{if .Preview}} hidden{{end}}>
+                <span class="package-symbol">{{.Initials}}</span
+                ><span class="placeholder-label">{{.Category}}</span>
+              </div>
+              {{if .Preview}}<img
+                class="preview-image"
+                src="{{.Preview}}"
+                alt=""
+                loading="lazy"
+                referrerpolicy="no-referrer"
+              />{{end}}
+            </a>
+            <div class="card-content">
+              <div class="card-title">
+                <h2><a href="packages/{{.Name}}.html">{{.DisplayName}}</a></h2>
+                {{if .Latest}}<span class="version-badge">v{{.Latest}}</span
+                >{{else}}<span class="unreleased-badge">Coming soon</span
+                >{{end}}
+              </div>
+              <p>{{.Description}}</p>
+              <div class="tags">
+                {{range .Tags}}<a class="tag" href="?tag={{tagQuery .}}"
+                  >{{.}}</a
+                >{{end}}
+              </div>
+              <p class="package-meta">{{.Repository}}</p>
+            </div>
+          </article>
+          {{end}}
+        </div>
+        <div id="no-results" class="panel" hidden>
+          <h2>No packages match</h2>
+          <p>Try another search or clear the selected tags.</p>
+        </div>
+        {{if not .Packages}}
+        <div class="panel">
+          <h2>The toolbox is getting started</h2>
+          <p>Packages will appear here as they are added to the catalog.</p>
+        </div>
+        {{end}}
+      </main>
+    </div>
+    {{end}}
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <p>Small packages. More possibilities.</p>
+        <div>
+          <a href="{{.Prefix}}master.json">Catalog JSON</a
+          ><a href="https://github.com/{{.Repository}}">Contribute ↗</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

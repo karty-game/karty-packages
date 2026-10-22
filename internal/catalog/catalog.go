@@ -35,6 +35,8 @@ type metadata struct {
 
 type packageMetadata struct {
 	Name        string   `json:"name"`
+	Repository  string   `json:"repository,omitempty"`
+	Ref         string   `json:"ref,omitempty"`
 	Description string   `json:"description"`
 	Tags        []string `json:"tags"`
 	Readme      string   `json:"readme"`
@@ -51,6 +53,7 @@ type Master struct {
 
 type Package struct {
 	Name        string    `json:"name"`
+	Repository  string    `json:"repository"`
 	Description string    `json:"description"`
 	Tags        []string  `json:"tags"`
 	Readme      string    `json:"readme"`
@@ -85,16 +88,22 @@ type asset struct {
 // uses a bounded HTTPS downloader restricted to GitHub release asset hosts.
 type FetchText func(string) (string, error)
 
-// Build validates both documents before constructing a deterministic catalog.
-func Build(catalogJSON, releasesJSON []byte, repository string, fetch FetchText) (Master, error) {
-	result := Master{FormatVersion: 1, Repository: repository, Packages: []Package{}}
+func validRepository(repository string) bool {
 	if !repositoryPattern.MatchString(repository) {
-		return result, fmt.Errorf("invalid GitHub repository")
+		return false
 	}
 	for _, part := range strings.Split(repository, "/") {
 		if part == "." || part == ".." {
-			return result, fmt.Errorf("invalid GitHub repository")
+			return false
 		}
+	}
+	return true
+}
+
+func catalogPackages(catalogJSON []byte, repository string) (Master, error) {
+	result := Master{FormatVersion: 1, Repository: repository, Packages: []Package{}}
+	if !validRepository(repository) {
+		return result, fmt.Errorf("invalid GitHub repository")
 	}
 	var input metadata
 	decoder := json.NewDecoder(bytes.NewReader(catalogJSON))
@@ -121,28 +130,70 @@ func Build(catalogJSON, releasesJSON []byte, repository string, fetch FetchText)
 		result.Packages = append(result.Packages, entry)
 	}
 	sort.Slice(result.Packages, func(i, j int) bool { return result.Packages[i].Name < result.Packages[j].Name })
-	var releases []*release
-	if err := json.Unmarshal(releasesJSON, &releases); err != nil {
+	return result, nil
+}
+
+// Repositories returns the sorted, unique release sources after validating all metadata.
+func Repositories(catalogJSON []byte, repository string) ([]string, error) {
+	master, err := catalogPackages(catalogJSON, repository)
+	if err != nil {
+		return nil, err
+	}
+	seen := make(map[string]bool)
+	var repositories []string
+	for _, entry := range master.Packages {
+		if !seen[entry.Repository] {
+			repositories = append(repositories, entry.Repository)
+			seen[entry.Repository] = true
+		}
+	}
+	sort.Strings(repositories)
+	return repositories, nil
+}
+
+// Build accepts releases keyed by repository. A legacy array describes only the default repository.
+func Build(catalogJSON, releasesJSON []byte, repository string, fetch FetchText) (Master, error) {
+	result, err := catalogPackages(catalogJSON, repository)
+	if err != nil {
+		return result, err
+	}
+	releasesByRepository := make(map[string][]*release)
+	if bytes.HasPrefix(bytes.TrimSpace(releasesJSON), []byte("[")) {
+		var releases []*release
+		err = json.Unmarshal(releasesJSON, &releases)
+		releasesByRepository[repository] = releases
+	} else {
+		err = json.Unmarshal(releasesJSON, &releasesByRepository)
+	}
+	if err != nil {
 		return result, fmt.Errorf("decode GitHub releases: %w", err)
 	}
-	if releases == nil {
-		return result, fmt.Errorf("GitHub releases must be an array")
+	if releasesByRepository == nil {
+		return result, fmt.Errorf("GitHub releases must be an array or repository map")
+	}
+	for source, releases := range releasesByRepository {
+		if !validRepository(source) || releases == nil {
+			return result, fmt.Errorf("invalid releases for repository %s", source)
+		}
+		for _, published := range releases {
+			if published == nil || published.TagName == "" {
+				return result, fmt.Errorf("invalid GitHub release in %s", source)
+			}
+		}
 	}
 	if fetch == nil {
 		fetch = fetchChecksumText
 	}
-	for _, published := range releases {
-		if published == nil {
-			return result, fmt.Errorf("invalid GitHub release")
+	for i := range result.Packages {
+		entry := &result.Packages[i]
+		releases, exists := releasesByRepository[entry.Repository]
+		if !exists {
+			return result, fmt.Errorf("missing releases for repository %s", entry.Repository)
 		}
-		if published.Draft || published.Prerelease {
-			continue
-		}
-		if published.TagName == "" {
-			return result, fmt.Errorf("release is missing its tag")
-		}
-		for i := range result.Packages {
-			entry := &result.Packages[i]
+		for _, published := range releases {
+			if published.Draft || published.Prerelease {
+				continue
+			}
 			prefix := entry.Name + "-v"
 			if !strings.HasPrefix(published.TagName, prefix) {
 				continue
@@ -153,7 +204,7 @@ func Build(catalogJSON, releasesJSON []byte, repository string, fetch FetchText)
 				return result, fmt.Errorf("invalid package version: %s", version)
 			}
 			if semver.Prerelease("v"+version) != "" {
-				break
+				continue
 			}
 			for _, existing := range entry.Versions {
 				if existing.Version == version {
@@ -165,20 +216,19 @@ func Build(catalogJSON, releasesJSON []byte, repository string, fetch FetchText)
 			if err != nil {
 				return result, err
 			}
-			archiveURL, err := releaseURL(archiveAsset.BrowserDownloadURL, repository, "download", published.TagName, filename)
+			archiveURL, err := releaseURL(archiveAsset.BrowserDownloadURL, entry.Repository, "download", published.TagName, filename)
 			if err != nil {
 				return result, err
 			}
-			pageURL, err := releaseURL(published.HTMLURL, repository, "tag", published.TagName, "")
+			pageURL, err := releaseURL(published.HTMLURL, entry.Repository, "tag", published.TagName, "")
 			if err != nil {
 				return result, err
 			}
-			checksum, err := archiveChecksum(archiveAsset, published.Assets, repository, published.TagName, filename, fetch)
+			checksum, err := archiveChecksum(archiveAsset, published.Assets, entry.Repository, published.TagName, filename, fetch)
 			if err != nil {
 				return result, err
 			}
 			entry.Versions = append(entry.Versions, Version{Version: version, Archive: archiveURL, SHA256: checksum, ReleaseURL: pageURL})
-			break
 		}
 	}
 	for i := range result.Packages {
@@ -198,7 +248,13 @@ func Build(catalogJSON, releasesJSON []byte, repository string, fetch FetchText)
 }
 
 func publicPackage(item packageMetadata, repository string) (Package, error) {
-	entry := Package{Name: item.Name, Description: strings.TrimSpace(item.Description), Tags: append([]string{}, item.Tags...), Versions: []Version{}}
+	if item.Repository != "" {
+		repository = item.Repository
+	}
+	entry := Package{Name: item.Name, Repository: repository, Description: strings.TrimSpace(item.Description), Tags: append([]string{}, item.Tags...), Versions: []Version{}}
+	if !validRepository(repository) {
+		return entry, fmt.Errorf("invalid GitHub repository for %s", item.Name)
+	}
 	if !namePattern.MatchString(item.Name) {
 		return entry, fmt.Errorf("invalid catalog package name")
 	}
@@ -217,31 +273,48 @@ func publicPackage(item packageMetadata, repository string) (Package, error) {
 	}
 	sort.Strings(entry.Tags)
 	source := "packages/" + item.Name
-	if item.Source != "" && item.Source != source {
+	if item.Repository != "" {
+		source = "."
+	}
+	if item.Source != "" {
+		source = item.Source
+	}
+	if source != "." && !safePath(source) {
 		return entry, fmt.Errorf("invalid source path for %s", item.Name)
+	}
+	ref := item.Ref
+	if ref == "" {
+		ref = "main"
+	}
+	if !safePath(ref) {
+		return entry, fmt.Errorf("invalid source ref for %s", item.Name)
+	}
+	base := ""
+	if source != "." {
+		base = source + "/"
 	}
 	readme := item.Readme
 	if readme == "" {
-		readme = source + "/README.md"
+		readme = base + "README.md"
 	}
-	if !packagePath(readme, item.Name) || !strings.HasSuffix(readme, ".md") {
+	if !safePath(readme) || !strings.HasSuffix(readme, ".md") {
 		return entry, fmt.Errorf("invalid README path for %s", item.Name)
 	}
-	entry.Readme = "https://github.com/" + repository + "/blob/main/" + readme
-	entry.Source = "https://github.com/" + repository + "/tree/main/" + source
+	entry.Readme = "https://github.com/" + repository + "/blob/" + url.PathEscape(ref) + "/" + readme
+	entry.Source = "https://github.com/" + repository + "/tree/" + url.PathEscape(ref)
+	if source != "." {
+		entry.Source += "/" + source
+	}
 	if item.Preview != "" {
-		if !packagePath(item.Preview, item.Name) || !previewPattern.MatchString(item.Preview) {
+		if !safePath(item.Preview) || !previewPattern.MatchString(item.Preview) {
 			return entry, fmt.Errorf("invalid preview for %s", item.Name)
 		}
-		entry.Preview = "https://raw.githubusercontent.com/" + repository + "/main/" + item.Preview
+		entry.Preview = "https://raw.githubusercontent.com/" + repository + "/" + url.PathEscape(ref) + "/" + item.Preview
 	}
 	return entry, nil
 }
 
-func packagePath(value, name string) bool {
-	if !strings.HasPrefix(value, "packages/"+name+"/") {
-		return false
-	}
+func safePath(value string) bool {
 	for _, part := range strings.Split(value, "/") {
 		if !pathPartPattern.MatchString(part) || part == "." || part == ".." {
 			return false
@@ -261,7 +334,9 @@ func releaseURL(value, repository, kind, tag, filename string) (string, error) {
 		expected += "/" + filename
 		canonical += "/" + url.PathEscape(filename)
 	}
-	if parsed.Scheme != "https" || parsed.Host != "github.com" || parsed.User != nil || parsed.RawQuery != "" || parsed.ForceQuery || parsed.Fragment != "" || parsed.Path != expected {
+	repositoryEnd := len(repository) + 1
+	pathMatches := len(parsed.Path) == len(expected) && strings.EqualFold(parsed.Path[:repositoryEnd], expected[:repositoryEnd]) && parsed.Path[repositoryEnd:] == expected[repositoryEnd:]
+	if parsed.Scheme != "https" || parsed.Host != "github.com" || parsed.User != nil || parsed.RawQuery != "" || parsed.ForceQuery || parsed.Fragment != "" || !pathMatches {
 		return "", fmt.Errorf("release URL must match expected GitHub repository, tag and asset: %s", value)
 	}
 	return canonical, nil

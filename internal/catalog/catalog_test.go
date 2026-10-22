@@ -214,7 +214,7 @@ func TestMetadataValidation(t *testing.T) {
 		"unsafe name":       func(m *metadata) { m.Packages[0].Name = "../controllers" },
 		"traversal":         func(m *metadata) { m.Packages[0].Readme = "packages/controllers/../../README.md" },
 		"external preview":  func(m *metadata) { m.Packages[0].Preview = "https://example.com/image.png" },
-		"wrong source":      func(m *metadata) { m.Packages[0].Source = "packages/dialogue" },
+		"unsafe source":     func(m *metadata) { m.Packages[0].Source = "packages/../dialogue" },
 		"duplicate package": func(m *metadata) { m.Packages = append(m.Packages, m.Packages[0]) },
 		"duplicate tags":    func(m *metadata) { m.Packages[0].Tags = []string{"input", "input"} },
 	}

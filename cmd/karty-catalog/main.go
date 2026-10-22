@@ -12,18 +12,31 @@ import (
 
 func run() error {
 	repository := flag.String("repository", "", "GitHub owner/repository")
-	releasesPath := flag.String("releases", "", "GitHub releases JSON array")
+	releasesPath := flag.String("releases", "", "Offline releases JSON: repository map, or array for the default repository")
 	output := flag.String("output", "", "Output directory")
 	catalogPath := flag.String("catalog", "catalog.json", "Curated catalog metadata")
 	flag.Parse()
-	if *repository == "" || *releasesPath == "" || *output == "" || flag.NArg() != 0 {
-		return fmt.Errorf("usage: karty-catalog --repository owner/repo --releases releases.json --output directory [--catalog catalog.json]")
+	if *repository == "" || *output == "" || flag.NArg() != 0 {
+		return fmt.Errorf("usage: karty-catalog --repository owner/repo --output directory [--catalog catalog.json] [--releases releases.json]")
 	}
 	metadata, err := os.ReadFile(*catalogPath)
 	if err != nil {
 		return err
 	}
-	releases, err := os.ReadFile(*releasesPath)
+	repositories, err := catalog.Repositories(metadata, *repository)
+	if err != nil {
+		return err
+	}
+	var releases []byte
+	if *releasesPath != "" {
+		releases, err = os.ReadFile(*releasesPath)
+	} else {
+		token := os.Getenv("GH_TOKEN")
+		if token == "" {
+			token = os.Getenv("GITHUB_TOKEN")
+		}
+		releases, err = catalog.FetchReleases(repositories, token)
+	}
 	if err != nil {
 		return err
 	}

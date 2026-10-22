@@ -17,7 +17,7 @@ GOEXPERIMENT = "simd"
 postinstall = "hk install --mise"
 
 [tasks.test-tools]
-description = "Test independent archive, release and catalog tooling"
+description = "Test independent archive, release, catalog and website tooling"
 run = "go test -count=1 -timeout=9s ./..."
 
 [tasks.test-packages]
@@ -37,6 +37,7 @@ run = [
   "go build -o dist/karty-package ./cmd/karty-package",
   "go build -o dist/karty-catalog ./cmd/karty-catalog",
   "go build -o dist/karty-release ./cmd/karty-release",
+  "go build -o dist/karty-site ./cmd/karty-site",
 ]
 
 [tasks.check-packages]
@@ -58,7 +59,22 @@ run = "go run scripts/fps-kit/generate.go scripts/fps-kit/decals.go"
 run = "go run scripts/fps-kit/generate.go scripts/fps-kit/decals.go --check"
 
 [tasks.catalog]
-run = "go run ./cmd/karty-catalog --repository karty-game/karty-packages --releases dist/releases.json --output dist/catalog"
+run = "go run ./cmd/karty-catalog --repository karty-game/karty-packages --output dist/catalog"
+
+[tasks.site]
+description = "Generate the package website from dist/catalog/master.json"
+run = "go run ./cmd/karty-site"
+
+[tasks.check-site-web]
+description = "Check package search, filters and detail pages in an installed Chromium"
+run = '''
+: "${KARTY_SITE_BROWSER:?Set KARTY_SITE_BROWSER to an installed Chromium executable}"
+go test -count=1 -timeout=9s -run TestBrowserInteractions -v ./website
+'''
+
+[tasks.preview-site]
+description = "Generate and preview the package website on loopback"
+run = "go run ./cmd/karty-site --serve 127.0.0.1:8082"
 
 [tasks.fmt]
 run = "hk fix --all --profile format"

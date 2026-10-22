@@ -5,14 +5,20 @@ on:
     paths:
       - catalog.json
       - cmd/karty-catalog/**
+      - cmd/karty-site/**
+      - website/**
+      - go.mod
+      - go.sum
       - internal/catalog/**
       - .github/workflows/catalog.yml
   workflow_dispatch:
     inputs:
       deploy:
-        description: Deploy master.json to GitHub Pages (enable Pages first)
+        description: Deploy the package website and master.json to GitHub Pages
         type: boolean
         default: false
+  schedule:
+    - cron: "23 */6 * * *"
   workflow_call:
     inputs:
       deploy:
@@ -36,29 +42,27 @@ jobs:
           ref: ${{ github.event.repository.default_branch }}
           persist-credentials: false
       - uses: jdx/mise-action@v4
-      - name: Read published package releases
+      - name: Generate the public catalog
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          mkdir -p dist
-          gh api --paginate "repos/$GITHUB_REPOSITORY/releases?per_page=100" --jq '.[]' | jq -s . > dist/releases.json
-      - name: Generate the public catalog
-        run: go run ./cmd/karty-catalog --repository "$GITHUB_REPOSITORY" --releases dist/releases.json --output dist/catalog
+        run: go run ./cmd/karty-catalog --repository "$GITHUB_REPOSITORY" --output dist/catalog
+      - name: Generate HTML and Markdown package pages
+        run: mise run site
       - uses: actions/upload-artifact@v7
         with:
           name: package-catalog
           path: dist/catalog/
           if-no-files-found: error
       - name: Configure Pages
-        if: inputs.deploy || (github.event_name == 'push' && vars.PACKAGE_CATALOG_PAGES == 'true')
+        if: inputs.deploy || ((github.event_name == 'push' || github.event_name == 'schedule') && vars.PACKAGE_CATALOG_PAGES == 'true')
         uses: actions/configure-pages@v5
       - name: Upload Pages artifact
-        if: inputs.deploy || (github.event_name == 'push' && vars.PACKAGE_CATALOG_PAGES == 'true')
+        if: inputs.deploy || ((github.event_name == 'push' || github.event_name == 'schedule') && vars.PACKAGE_CATALOG_PAGES == 'true')
         uses: actions/upload-pages-artifact@v4
         with:
           path: dist/catalog/
   deploy:
-    if: inputs.deploy || (github.event_name == 'push' && vars.PACKAGE_CATALOG_PAGES == 'true')
+    if: inputs.deploy || ((github.event_name == 'push' || github.event_name == 'schedule') && vars.PACKAGE_CATALOG_PAGES == 'true')
     needs: build
     runs-on: ubuntu-24.04
     permissions:
