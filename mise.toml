@@ -18,7 +18,10 @@ postinstall = "hk install --mise"
 
 [tasks.test-tools]
 description = "Test independent archive, release, catalog and website tooling"
-run = "go test -count=1 -timeout=9s ./..."
+run = [
+  "go test -count=1 -timeout=9s ./...",
+  "go test -count=1 -timeout=9s scripts/fps-kit/generate.go scripts/fps-kit/decals.go scripts/fps-kit/generate_test.go",
+]
 
 [tasks.test-packages]
 description = "Test every code package using its own module"

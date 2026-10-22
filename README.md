@@ -39,6 +39,9 @@ Commit and push the package sources and workflows first. Set the package's
 Choose the package and its version. Leave **publish** unchecked to validate
 and download candidate artifacts without creating a release.
 
+For FPS Kit, edit the version in `packages/fps-kit/karty-package.toml` directly.
+The asset generator preserves that value; no generator version needs updating.
+
 For example, publish FPS Kit after reviewing its candidate:
 
 ```sh

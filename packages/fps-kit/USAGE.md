@@ -285,19 +285,20 @@ instances also carry their ordinary geometry/body costs.
 
 The artwork is original, generated from tracked geometric recipes, and covered
 by the included MIT license. The supplied reference images are not redistributed
-or used as texture pixels. The generator owns the PNGs, manifest and crate frame
-geometry; handwritten static extras live in `scripts/fps-kit/props.yaml`.
-From the CLI repository root:
+or used as texture pixels. The generator owns the PNGs, manifest exports and crate
+frame geometry; handwritten static extras live in `scripts/fps-kit/props.yaml`.
+Edit the release version directly in `packages/fps-kit/karty-package.toml`; the
+generator reads and preserves it. From the packages repository root:
 
 ```sh
 mise run generate-fps-kit
-mise run check-fps-kit
-karty package export --output /tmp/fps-kit-0.1.0.kpkg packages/fps-kit
+mise run check-generated
+mise run package -- fps-kit
 ```
 
 Import that `.kpkg` into another game for a fixed, checksummed copy. Neither
-import nor export runs the generator. Version 0.1.0 is local source; no published
-package or SDK release is implied.
+import nor export runs the generator. Exporting a candidate does not publish a
+package or imply an SDK release.
 
 Maintainers publish a versioned `.kpkg` and its SHA-256 checksum, then update the
 SDK starter's archive URL and checksum together. The canonical artwork and
