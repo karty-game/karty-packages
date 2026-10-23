@@ -112,3 +112,7 @@ run = [
 
 [tasks.install-hooks]
 run = "hk install --mise"
+
+[tasks.check-controller]
+description = "Measure archived controllers-3d in an actual TinyGo guest (explicit archive SHA pins required)"
+run = "go run ./cmd/check-controller"

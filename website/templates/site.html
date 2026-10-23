@@ -95,17 +95,13 @@
             >{{end}}
           </div>
           {{if .Latest}}
-          <p>
-            Run from your Karty project directory. The download is verified
-            before import.
-          </p>
+          <p>Run from your Karty project directory.</p>
           <pre
             class="command-block"
           ><code id="install-latest">{{.Command}}</code></pre>
           <p class="copy-status" role="status" aria-live="polite"></p>
           <p class="hint">
-            Updating an existing package? Add <code>--replace</code> to the
-            import command.
+            To update: <code>karty package upgrade {{.Name}}</code>.
           </p>
           {{else}}
           <p>

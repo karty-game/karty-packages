@@ -1,0 +1,78 @@
+package main
+
+import (
+	"math"
+	"runtime"
+
+	"example.com/controllercheck/.karty/engine"
+	fpscontroller "example.com/controllercheck/.karty/processed/code/controllers-3d.sdk/controller"
+)
+
+var memory runtime.MemStats
+var negativeControl []byte
+var plain, physics bool
+var camera *engine.Camera3D
+var player *fpscontroller.FirstPersonController
+var updates, proposals uint64
+
+//go:wasmexport karty_use_first_person
+func useFirstPerson(mode uint32) { physics, plain = mode&1 != 0, mode&2 != 0 }
+
+//go:wasmexport karty_register
+func main() {
+	if plain {
+		engine.Run(playerClient{})
+		return
+	}
+	engine.Run(engine.Hooks{OnStart: start, OnUpdate: observe})
+}
+
+type playerClient struct{}
+
+func (playerClient) Initialize() { start() }
+func (playerClient) Update(frame engine.Frame) { observe(frame) }
+func (playerClient) Shutdown() {}
+
+func start() {
+	game := engine.Game{}
+	camera = game.NewCamera3D(9, engine.Camera3DSettings{
+		Projection: engine.CameraProjectionPerspective, Output: engine.CameraOutputFull,
+		Position: engine.Vec3{Z: 1.7}, VerticalFOV: 1, OrthoHeight: 8,
+		NearClip: .1, FarClip: 100, ViewportWidth: 1280, ViewportHeight: 720,
+	})
+	options := fpscontroller.DefaultFirstPersonOptions()
+	if !physics { options.Mode = fpscontroller.FirstPersonFree }
+	options.BeforeMove = func(_ *fpscontroller.FirstPersonController, _ *fpscontroller.FirstPersonMotion) { proposals++ }
+	var err error
+	player, err = fpscontroller.AttachFirstPerson(game, camera, options)
+	if err != nil { panic(err) }
+}
+
+func observe(engine.Frame) {
+	updates++
+	if updates != proposals { panic("controller must run once before every game update") }
+}
+
+//go:wasmexport karty_allocations
+func allocations() uint64 { runtime.ReadMemStats(&memory); return memory.Mallocs }
+
+//go:wasmexport karty_allocated_bytes
+func allocatedBytes() uint64 { runtime.ReadMemStats(&memory); return memory.TotalAlloc }
+
+//go:wasmexport karty_negative_control
+func allocate() { negativeControl = make([]byte, 2048); negativeControl[0] = 1 }
+
+//go:wasmexport karty_first_person_state
+func state(index uint32) uint64 {
+	switch index {
+	case 0: return updates
+	case 1: return proposals
+	case 2: return uint64(camera.ID())
+	case 3: if player.TouchMode() { return 1 }
+	case 4: return uint64(math.Float32bits(camera.Settings().Position.X))
+	case 5: return uint64(math.Float32bits(camera.Settings().Position.Y))
+	case 6: return uint64(math.Float32bits(camera.Settings().Yaw))
+	case 7: return uint64(math.Float32bits(camera.Settings().Pitch))
+	}
+	return 0
+}

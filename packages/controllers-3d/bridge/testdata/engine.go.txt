@@ -1,0 +1,98 @@
+// This bounded public-API test double isolates package policy. Actual SDK/WASM
+// integration is validated by the engine and CLI consumer suites.
+package engine
+
+import("errors";"math")
+
+var ErrInvalidEntity=errors.New("invalid entity")
+var ErrInvalidArgument=errors.New("invalid argument")
+var ErrCapacity=errors.New("capacity")
+type Color uint32
+func RGBA(r,g,b,a uint8)Color{return Color(uint32(r)<<24|uint32(g)<<16|uint32(b)<<8|uint32(a))}
+type Vec2 struct{X,Y float32}
+type Vec3 struct{X,Y,Z float32}
+func NewVec2(x,y float32)Vec2{return Vec2{x,y}}
+func NewVec3(x,y,z float32)Vec3{return Vec3{x,y,z}}
+type Transform3D struct{Position,Scale Vec3;Yaw,Pitch,Roll float32}
+func NewTransform3D(p Vec3)Transform3D{return Transform3D{Position:p,Scale:Vec3{1,1,1}}}
+func finite(v float32)bool{return !math.IsNaN(float64(v))&&!math.IsInf(float64(v),0)&&math.Abs(float64(v))<=1e6}
+func(p Transform3D)Validate()error{for _,v:=range[]float32{p.Position.X,p.Position.Y,p.Position.Z,p.Yaw,p.Pitch,p.Roll,p.Scale.X,p.Scale.Y,p.Scale.Z}{if !finite(v){return ErrInvalidArgument}};return nil}
+type Camera3DSettings struct{Position Vec3;Yaw,Pitch float32;ViewportWidth,ViewportHeight uint32}
+func(s Camera3DSettings)Validate()error{if !finite(s.Position.X)||!finite(s.Position.Y)||!finite(s.Position.Z)||!finite(s.Yaw)||!finite(s.Pitch)||s.ViewportWidth==0||s.ViewportHeight==0{return ErrInvalidArgument};return nil}
+type Camera3D struct{settings Camera3DSettings;alive bool}
+func(c *Camera3D)Settings()Camera3DSettings{return c.settings}
+func(c *Camera3D)SetSettings(s Camera3DSettings){c.settings=s;Commands++}
+func(c *Camera3D)Level()uint32{return 7}
+func(c *Camera3D)Ref()EntityRef{return EntityRef{c}}
+type EntityRef struct{camera *Camera3D}
+func(r EntityRef)Alive()bool{return r.camera!=nil&&r.camera.alive}
+func(r EntityRef)SetPose(p Transform3D)error{if !r.Alive(){return ErrInvalidEntity};r.camera.settings.Position,r.camera.settings.Yaw,r.camera.settings.Pitch=p.Position,p.Yaw,p.Pitch;Commands++;return nil}
+type BodyKind uint8
+const(BodyStatic BodyKind=iota;BodyDynamic;BodyCharacter)
+type CapsuleCollider struct{Radius,Height float32;Offset Vec3}
+type BoxCollider struct{HalfExtents,Offset Vec3}
+type BodyForceSettings struct{GravityScale float32}
+type BodySettings struct{Kind BodyKind;Collider any;Mass,Friction,Restitution float32;Forces BodyForceSettings;AllowRotation bool}
+func(s BodySettings)Validate(mode WorldMode)error{if s.Mass<=0||!finite(s.Mass)||s.Friction<0||!finite(s.Friction)||s.Forces.GravityScale<0||!finite(s.Forces.GravityScale){return ErrInvalidArgument};if s.Kind==BodyCharacter{v,ok:=s.Collider.(CapsuleCollider);if !ok||v.Radius<=0||v.Height<2*v.Radius{return ErrInvalidArgument}};return nil}
+type Body struct{camera *Camera3D;alive bool;velocity Vec3}
+func(b *Body)Alive()bool{return b!=nil&&b.alive&&b.camera.alive}
+func(b *Body)SetHorizontalVelocity(v Vec2)error{if !b.Alive(){return ErrInvalidEntity};b.velocity.X,b.velocity.Y=v.X,v.Y;Commands++;return nil}
+func(b *Body)SetVelocity(v Vec3)error{b.velocity=v;Commands++;return nil}
+func(b *Body)Detach()error{b.alive=false;Commands++;return nil}
+func(b *Body)TeleportPose(p Transform3D)error{if !b.Alive(){return ErrInvalidEntity};b.velocity=Vec3{};b.camera.settings.Position,b.camera.settings.Yaw,b.camera.settings.Pitch=p.Position,p.Yaw,p.Pitch;Commands++;return nil}
+type WorldMode uint8
+const(WorldPlanar WorldMode=iota;WorldSpatial)
+type WorldSettings struct{Mode WorldMode;Gravity Vec3}
+type World struct{}
+var configuration WorldSettings
+var configured bool
+var bodies [128]*Body
+var BodyFull bool
+func(w World)Settings()(WorldSettings,bool){return configuration,configured}
+func(w World)CanAttachBody(r EntityRef,s BodySettings,m WorldMode)error{if !r.Alive(){return ErrInvalidEntity};if BodyFull{return ErrCapacity};for _,b:=range bodies{if b!=nil&&b.Alive()&&b.camera==r.camera{return ErrInvalidArgument}};if configured&&configuration.Mode!=m{return ErrInvalidArgument};return s.Validate(m)}
+func(w World)Configure(s WorldSettings)error{configuration=s;configured=true;Commands++;return nil}
+func(w World)AttachBody(r EntityRef,s BodySettings)(*Body,error){if err:=w.CanAttachBody(r,s,WorldSpatial);err!=nil{return nil,err};b:=&Body{camera:r.camera,alive:true};for i:=range bodies{if bodies[i]==nil||!bodies[i].Alive(){bodies[i]=b;Commands++;return b,nil}};return nil,ErrCapacity}
+type Game struct{}
+func(Game)World(uint32)World{return World{}}
+var Captured bool
+var Commands int
+func(Game)SetCursorCaptured(v bool){Captured=v}
+type Shape struct{Radius float32}
+func Circle(v float32)Shape{return Shape{v}}
+type Shape2D struct{position Vec2;alpha float32;destroyed bool}
+func(Game)NewShape2D(s Shape,p Vec2)*Shape2D{return &Shape2D{position:p,alpha:1}}
+func(s *Shape2D)SetFill(Color){}
+func(s *Shape2D)SetStroke(Color,float32){}
+func(s *Shape2D)SetLayer(int32){}
+func(s *Shape2D)SetAlpha(a float32){s.alpha=a}
+func(s *Shape2D)Alpha()float32{return s.alpha}
+func(s *Shape2D)Position()Vec2{return s.position}
+func(s *Shape2D)SetTransform(p,scale Vec2,r float32){s.position=p}
+func(s *Shape2D)Destroy(){s.destroyed=true}
+type Key uint8
+const(KeyA Key=iota;KeyD;KeyW;KeyS;KeyLeft;KeyRight;KeyArrowUp;KeyArrowDown;KeyQ;KeyE;KeyC;KeySpace;KeyShiftLeft;KeyShiftRight;KeyControlLeft;KeyControlRight;KeyEscape)
+type PointerKind uint8
+const(PointerMouse PointerKind=iota;PointerTouch)
+type PointerPhase uint8
+const(PointerDown PointerPhase=iota;PointerMove;PointerUp;PointerCancel)
+type PointerInput struct{ID uint32;Kind PointerKind;Phase PointerPhase;X,Y,DeltaX,DeltaY float32;Buttons uint8;Captured bool}
+type EventType uint8
+const(EventInputReset EventType=iota;EventKeyDown;EventKeyUp;EventPointer)
+type InputEvent struct{Type EventType;Key Key;Pointer PointerInput}
+type Frame struct{}
+type ComponentCloseReason uint8
+const(ComponentClosed ComponentCloseReason=iota;ComponentOwnerDestroyed;ComponentLevelReleased;ComponentShutdown)
+type ComponentHooks struct{OnEvent func(*InputEvent);OnUpdate func(Frame);OnClose func(ComponentCloseReason)}
+type ComponentSubscription struct{index int;token uint64}
+type slot struct{owner EntityRef;hooks ComponentHooks;token uint64}
+var slots [64]slot
+var serial uint64
+func(Game)RegisterComponent(owner EntityRef,h ComponentHooks)(ComponentSubscription,error){for i:=range slots{if slots[i].token==0{serial++;slots[i]=slot{owner,h,serial};return ComponentSubscription{i,serial},nil}};return ComponentSubscription{},ErrCapacity}
+func(s ComponentSubscription)Alive()bool{return s.token!=0&&slots[s.index].token==s.token}
+func(s ComponentSubscription)Close(){if !s.Alive(){return};h:=slots[s.index].hooks;slots[s.index]=slot{};if h.OnClose!=nil{h.OnClose(ComponentClosed)}}
+func TestClose(reason ComponentCloseReason){for i:=range slots{if slots[i].token!=0{h:=slots[i].hooks;slots[i]=slot{};if h.OnClose!=nil{h.OnClose(reason)}}}}
+func TestTick(events ...InputEvent){for _,e:=range events{for i:=range slots{if slots[i].token!=0&&slots[i].hooks.OnEvent!=nil{slots[i].hooks.OnEvent(&e)}}};for i:=range slots{if slots[i].token!=0&&slots[i].hooks.OnUpdate!=nil{slots[i].hooks.OnUpdate(Frame{})}}}
+func TestReset(){TestClose(ComponentShutdown);slots=[64]slot{};bodies=[128]*Body{};BodyFull=false;configuration=WorldSettings{};configured=false;Commands=0;Captured=false}
+func TestCamera()*Camera3D{return &Camera3D{settings:Camera3DSettings{Position:Vec3{Z:1.7},ViewportWidth:1280,ViewportHeight:720},alive:true}}
+func TestVelocity(b *Body)Vec3{return b.velocity}
+func TestDestroy(c *Camera3D){TestClose(ComponentOwnerDestroyed);c.alive=false}

@@ -87,11 +87,9 @@ func Generate(masterJSON []byte, output string) error {
 		}
 		for i, version := range item.Versions {
 			entry.ReleaseVersions = append(entry.ReleaseVersions, versionView{Version: version, ID: fmt.Sprintf("install-%s-%d", item.Name, i), Command: installCommand(item.Name, version)})
-			if item.Latest != nil && version.Version == *item.Latest {
-				entry.Command = installCommand(item.Name, version)
-			}
 		}
 		if item.Latest != nil {
+			entry.Command = "karty package import " + item.Name
 			pages.ReadyCount++
 		}
 		pages.Packages = append(pages.Packages, entry)

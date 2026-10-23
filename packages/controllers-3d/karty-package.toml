@@ -1,3 +1,8 @@
 format_version = 1
 name = "controllers-3d"
-version = "0.0.1"
+version = "0.0.2"
+sdk = "0.0.18"
+
+[[processors]]
+name = "sdk"
+command = ["go", "run", "./cmd/controller-sdk"]

@@ -1,0 +1,46 @@
+{
+  "enabled": true,
+  "cases": [
+    {
+      "name": "keyboard",
+      "physicsOnly": false,
+      "start": "S1RZQhAAAQAAAAAAAAAAAAEAAAAFAAAAAQIAGQA=",
+      "variants": ["S1RZQhAAAQAAAAAAAAAAAAAAAAAAAAAA"]
+    },
+    {
+      "name": "captured-mouse",
+      "physicsOnly": false,
+      "start": "S1RZQhAAAQAAAAAAAAAAAAEAAAAbAAAADRgAAAAAAAEBAQAAAPpDAAD6QwAAAAAAAAAA",
+      "variants": [
+        "S1RZQhAAAQAAAAAAAAAAAAEAAAAbAAAADRgAAAAAAAECAQEAAPpDAAD6QwAAAEAAAIA/",
+        "S1RZQhAAAQAAAAAAAAAAAAEAAAAbAAAADRgAAAAAAAECAQEAAPpDAAD6QwAAAMAAAIC/"
+      ]
+    },
+    {
+      "name": "dual-touch",
+      "physicsOnly": false,
+      "start": "S1RZQhAAAQAAAAAAAAAAAAIAAAA2AAAADRgAAQAAAAIBAQAAAHpDAAAWRAAAAAAAAAAADRgAAgAAAAIBAQAAAGFEAAAWRAAAAAAAAAAA",
+      "variants": [
+        "S1RZQhAAAQAAAAAAAAAAAAIAAAA2AAAADRgAAQAAAAICAQAAAHpDAAAKRAAAAAAAAAAADRgAAgAAAAICAQAAAGdEAAAZRAAAAAAAAAAA",
+        "S1RZQhAAAQAAAAAAAAAAAAIAAAA2AAAADRgAAQAAAAICAQAAAHpDAAAORAAAAAAAAAAADRgAAgAAAAICAQAAAGlEAAAaRAAAAAAAAAAA"
+      ]
+    },
+    {
+      "name": "accepted-physics-pose",
+      "physicsOnly": true,
+      "start": "S1RZQhAAAQAAAAAAAAAAAAEAAAAFAAAAAQIAGQA=",
+      "variants": [
+        "S1RZQhAAAQAAAAAAAAAAAAEAAAArAAAACygAAQAAAAAAAEAAAEBAmpnZPwAAAAAAAAAAAAAAAAAAgD8AAIA/AACAPw==",
+        "S1RZQhAAAQAAAAAAAAAAAAEAAAArAAAACygAAQAAAAAAgEAAAKBAmpnZPwAAAAAAAAAAAAAAAAAAgD8AAIA/AACAPw=="
+      ]
+    }
+  ],
+  "reset": "S1RZQhAAAQAAAAAAAAAAAAEAAAADAAAADgAA",
+  "commands": {
+    "camera": 28,
+    "capture": 36,
+    "shape": 10,
+    "transform": 3,
+    "velocity": 45
+  }
+}

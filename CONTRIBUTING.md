@@ -142,3 +142,26 @@ The discovery API remains available at
 archive URL and SHA-256 in `karty.toml`; restoring an existing project does not
 require the website or catalog to be online. The CLI and SDK can adopt a package
 release after it is published, without embedding its source or artwork.
+
+The archived controllers-3d adapter also has a package-owned TinyGo allocation gate.
+It compiles only verified release archives, then executes all 14 keyboard, captured
+mouse, dual-touch and accepted-physics-pose cases in public Wazero. Both game client
+styles and free/physics movement retain command, reset and zero-allocation checks;
+each case also verifies that the allocation counters detect deliberate heap growth.
+This is actual WASM execution, without browser graphics or physical device claims.
+
+```sh
+mise run check-controller -- \
+  --sdk-archive /path/to/sdk.zip --sdk-sha256 SDK_SHA256 \
+  --package-archive /path/to/controllers-3d.kpkg --package-sha256 PACKAGE_SHA256 \
+  --go /path/to/pinned/go --tinygo /path/to/pinned/tinygo
+```
+
+The compiler versions must match the SDK manifest. A successful report with both
+artifact hashes is written to `dist/validation/controller-allocations.json`.
+A failed run removes any previous report at that output path. The maintained Go
+runner and fixtures live outside exported packages, so adding coverage does not
+change a released package archive.
+
+Recorded candidate measurements and the exact invocation are in
+[controller validation](packages/VALIDATION.md#controllers-3d-002-and-real-tinygo-execution).

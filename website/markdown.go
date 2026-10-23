@@ -7,15 +7,8 @@ import (
 	"github.com/karty-game/karty-packages/internal/catalog"
 )
 
-func shellQuote(value string) string {
-	return "'" + strings.ReplaceAll(value, "'", "'\"'\"'") + "'"
-}
-
 func installCommand(name string, version catalog.Version) string {
-	filename := name + "-" + version.Version + ".kpkg"
-	return "curl --fail --location --proto '=https' --proto-redir '=https' \\\n  --output " + shellQuote(filename) + " \\\n  " + shellQuote(version.Archive) + " &&\n" +
-		"printf '%s  %s\\n' " + shellQuote(version.SHA256) + " " + shellQuote(filename) + " | sha256sum --check - &&\n" +
-		"karty package import " + shellQuote(filename)
+	return "karty package import " + name + "@" + version.Version
 }
 
 func markdownText(value string) string {
@@ -60,7 +53,7 @@ func packageMarkdown(entry packageView) string {
 	if entry.Latest == nil {
 		result.WriteString("No published release yet. Installation instructions will appear after a release is published.\n\n")
 	} else {
-		fmt.Fprintf(&result, "Run from your Karty project directory. Downloads are checked against the published SHA-256 before import.\n\n```sh\n%s\n```\n\nFor an existing package, add `--replace` to the import command.\n\n", entry.Command)
+		fmt.Fprintf(&result, "Run from your Karty project directory.\n\n```sh\n%s\n```\n\nTo update: `karty package upgrade %s`.\n\n", entry.Command, entry.Name)
 	}
 	result.WriteString("## Versions\n\n")
 	if len(entry.ReleaseVersions) == 0 {

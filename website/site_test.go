@@ -127,21 +127,31 @@ func TestGenerateInstallCommandsForEveryPublishedVersion(t *testing.T) {
 	for _, extension := range []string{"html", "md"} {
 		t.Run(extension, func(t *testing.T) {
 			page := html.UnescapeString(string(readSiteFile(t, output, "packages/community-props."+extension)))
+			requireContains(t, page, "karty package import community-props", "karty package upgrade community-props")
+			if extension == "html" {
+				requireContains(t, page, `id="install-latest">karty package import community-props</code>`)
+			} else {
+				requireContains(t, page, "```sh\nkarty package import community-props\n```")
+			}
 			for _, version := range []struct{ number, digest string }{{"1.2.3", "a"}, {"1.0.0", "b"}} {
 				filename := "community-props-" + version.number + ".kpkg"
 				requireContains(t, page,
-					"curl --fail --location --proto '=https' --proto-redir '=https'",
-					"--output '"+filename+"'",
-					"'https://github.com/community/props/releases/download/community-props-v"+version.number+"/"+filename+"' &&",
-					"printf '%s  %s\\n' '"+strings.Repeat(version.digest, 64)+"' '"+filename+"' | sha256sum --check - &&\nkarty package import '"+filename+"'",
+					"karty package import community-props@"+version.number,
+					strings.Repeat(version.digest, 64),
+					"https://github.com/community/props/releases/download/community-props-v"+version.number+"/"+filename,
 				)
+			}
+			for _, fragment := range []string{"curl --", "sha256sum", "--replace"} {
+				if strings.Contains(page, fragment) {
+					t.Errorf("package page retains obsolete installation instructions: %q", fragment)
+				}
 			}
 			if strings.Index(page, "community-props-1.2.3.kpkg") > strings.Index(page, "community-props-1.0.0.kpkg") {
 				t.Error("older version appears before the latest install command")
 			}
 			unreleased := string(readSiteFile(t, output, "packages/unreleased."+extension))
 			requireContains(t, unreleased, "No published release yet.", "No published versions.")
-			for _, fragment := range []string{"curl --", "sha256sum", "karty package import", "unreleased-0."} {
+			for _, fragment := range []string{"curl --", "sha256sum", "karty package import", "karty package upgrade", "unreleased-0."} {
 				if strings.Contains(unreleased, fragment) {
 					t.Errorf("unreleased package advertises an install: %q", fragment)
 				}

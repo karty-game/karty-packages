@@ -1,0 +1,70 @@
+package controller
+
+import("math";"testing";engine "example.com/controller-fixture/.karty/engine")
+
+func player(t *testing.T,mode FirstPersonMode)*FirstPersonController{t.Helper();engine.TestReset();localFirstPerson=nil;firstPersonTouchUsed=false;c,err:=AttachFirstPerson(engine.Game{},engine.TestCamera(),withMode(mode));if err!=nil{t.Fatal(err)};t.Cleanup(func(){engine.TestClose(engine.ComponentShutdown)});return c}
+func withMode(mode FirstPersonMode)FirstPersonOptions{o:=DefaultFirstPersonOptions();o.Mode=mode;return o}
+func key(k engine.Key,down bool)engine.InputEvent{kind:=engine.EventKeyUp;if down{kind=engine.EventKeyDown};return engine.InputEvent{Type:kind,Key:k}}
+func touch(id uint32,phase engine.PointerPhase,x,y float32)engine.InputEvent{return engine.InputEvent{Type:engine.EventPointer,Pointer:engine.PointerInput{ID:id,Kind:engine.PointerTouch,Phase:phase,X:x,Y:y,Buttons:1}}}
+func near(t *testing.T,a,b float32){t.Helper();if math.Abs(float64(a-b))>.00001{t.Fatalf("got %v,want %v",a,b)}}
+
+func TestAttachmentOwnershipValidationAndCapacity(t *testing.T){
+ c:=player(t,FirstPersonPhysics)
+ if c.Body()==nil||!c.Enabled()||c.Camera()==nil{t.Fatal("default player incomplete")}
+ if s,ok:=(engine.Game{}).World(7).Settings();!ok||s.Mode!=engine.WorldSpatial||s.Gravity.Z!=-9.81{t.Fatal("missing default spatial world")}
+ if _,err:=AttachFirstPerson(engine.Game{},c.Camera(),DefaultFirstPersonOptions());err!=engine.ErrCapacity{t.Fatal("attachment stole player",err)}
+ c.Close();c.Close();if c.Enabled()||c.Body()!=nil||localFirstPerson!=nil{t.Fatal("close retained ownership")}
+ for _,mutate:=range []func(*FirstPersonOptions){func(o *FirstPersonOptions){o.Speed=-1},func(o *FirstPersonOptions){o.MouseSensitivity=float32(math.NaN())},func(o *FirstPersonOptions){o.Touch.StickRadius=0},func(o *FirstPersonOptions){o.Touch.Layer=2147483647},func(o *FirstPersonOptions){o.Body.AllowRotation=true},func(o *FirstPersonOptions){o.Body.Mass=0}}{
+  engine.TestReset();before:=engine.Commands;o:=DefaultFirstPersonOptions();mutate(&o);if _,err:=AttachFirstPerson(engine.Game{},engine.TestCamera(),o);err==nil||engine.Commands!=before{t.Fatal("invalid attachment mutated host")}
+ }
+ engine.TestReset();engine.BodyFull=true;before:=engine.Commands;if _,err:=AttachFirstPerson(engine.Game{},engine.TestCamera(),DefaultFirstPersonOptions());err!=engine.ErrCapacity||engine.Commands!=before{t.Fatal("body capacity queued setup",err)}
+}
+
+func TestDesktopAcceptedPoseMouseAndAliases(t *testing.T){
+ c:=player(t,FirstPersonFree)
+ engine.TestTick(key(engine.KeyW,true),key(engine.KeyD,true));p:=c.Camera().Settings().Position;near(t,float32(math.Hypot(float64(p.X),float64(p.Y))),3.3/60)
+ engine.TestTick(key(engine.KeyShiftLeft,true));next:=c.Camera().Settings().Position;near(t,float32(math.Hypot(float64(next.X-p.X),float64(next.Y-p.Y))),6.6/60)
+ c.Reset();engine.TestTick(engine.InputEvent{Type:engine.EventPointer,Pointer:engine.PointerInput{Kind:engine.PointerMouse,Phase:engine.PointerMove,Captured:true,DeltaX:100,DeltaY:-80}})
+ near(t,c.Camera().Settings().Yaw,.25);near(t,c.Camera().Settings().Pitch,.2);settings:=c.Camera().Settings();engine.TestTick();if c.Camera().Settings()!=settings{t.Fatal("mouse applied twice")}
+ c.Reset();engine.TestTick(key(engine.KeyW,true),key(engine.KeyArrowUp,true),key(engine.KeyW,false));if c.motion().Y==0{t.Fatal("releasing alias lost held alternate")}
+ engine.TestTick(key(engine.KeyEscape,true));if engine.Captured||c.keys[engine.KeyArrowUp]{t.Fatal("escape retained controls")}
+}
+
+func TestTouchIndependenceClampingDeadzoneAndReset(t *testing.T){
+ c:=player(t,FirstPersonFree)
+ engine.TestTick(touch(1,engine.PointerDown,140,520),touch(2,engine.PointerDown,1140,520));if c.sticks[0].id!=1||c.sticks[1].id!=2||!c.TouchMode(){t.Fatal("simultaneous touch ownership")}
+ engine.TestTick(touch(3,engine.PointerDown,200,520));if c.sticks[0].id!=1{t.Fatal("finger stole occupied stick")}
+ engine.TestTick(touch(1,engine.PointerMove,140,400),touch(2,engine.PointerMove,1500,520));near(t,float32(math.Hypot(float64(c.sticks[1].dx),float64(c.sticks[1].dy))),c.options.Touch.StickRadius)
+ motion:=c.motion();if motion.Y<=0||motion.Yaw<=0{t.Fatal("simultaneous walk and look")}
+ engine.TestTick(touch(2,engine.PointerUp,0,0));if c.sticks[0].id!=1||c.sticks[1].id!=0{t.Fatal("look release stopped walking")}
+ c.Reset();if c.sticks[0].id!=0||c.sticks[1].id!=0{t.Fatal("reset retained fingers")}
+ engine.TestTick(touch(3,engine.PointerDown,140,520),touch(3,engine.PointerMove,141,521));x,y:=c.analog(0);if x!=0||y!=0{t.Fatal("deadzone moved player")}
+ c.SetEnabled(false);engine.TestTick(touch(4,engine.PointerDown,1140,520));if c.sticks[1].id!=0||c.sticks[0].base.Alpha()!=0{t.Fatal("disabled input/display active")};c.SetEnabled(true)
+}
+
+func TestFixedTouchDragSceneAndTouchPersistence(t *testing.T){
+ c:=player(t,FirstPersonFree);c.Close();o:=withMode(FirstPersonFree);o.Touch.FixedMove=true;o.Touch.LookDrag=true;o.Touch.HideLookThumb=true;o.Touch.AlignYOnFirstTouch=true;o.SceneContains=func(x,y float32)bool{return y>100};notified:=0;o.OnTouchMode=func(){notified++};var err error;c,err=AttachFirstPerson(engine.Game{},engine.TestCamera(),o);if err!=nil{t.Fatal(err)}
+ engine.TestTick(touch(1,engine.PointerDown,140,50));if c.TouchMode(){t.Fatal("UI touch captured")}
+ engine.TestTick(touch(1,engine.PointerDown,100,520));if c.sticks[0].x!=140||c.sticks[0].y!=520||notified!=1{t.Fatal("fixed/align gesture changed")}
+ engine.TestTick(touch(2,engine.PointerDown,1140,520),touch(2,engine.PointerMove,1150,510));if c.sticks[1].thumb!=nil||c.Camera().Settings().Yaw==0{t.Fatal("drag look lost hidden thumb behavior")}
+ c.Close();next,err:=AttachFirstPerson(engine.Game{},engine.TestCamera(),withMode(FirstPersonFree));if err!=nil||!next.TouchMode(){t.Fatal("touch presentation did not persist across camera replacement")}
+}
+
+func TestMovementOverridesTeleportDisableAndLifetime(t *testing.T){
+ c:=player(t,FirstPersonPhysics);body,camera:=c.Body(),c.Camera();_ =body.SetVelocity(engine.Vec3{Z:-3})
+ engine.TestTick(key(engine.KeyW,true));c.SetEnabled(false);if engine.TestVelocity(body).Z!=-3||engine.TestVelocity(body).Y!=0{t.Fatal("disable changed falling momentum")};c.SetEnabled(true)
+ if err:=c.Teleport(engine.Vec3{2,3,4},.2,.1);err!=nil{t.Fatal(err)};if c.Body()!=body||c.Camera()!=camera||camera.Settings().Position!=(engine.Vec3{2,3,4})||engine.TestVelocity(body)!=(engine.Vec3{}){t.Fatal("teleport changed identities/retained momentum")}
+ before:=camera.Settings();commands:=engine.Commands;if err:=c.Teleport(engine.Vec3{X:1e20},0,0);err!=engine.ErrInvalidArgument||camera.Settings()!=before||engine.Commands!=commands{t.Fatal("invalid teleport mutated host")}
+ calls:=0;c.options.BeforeMove=func(c *FirstPersonController,m *FirstPersonMotion){calls++;m.Y=.01};c.options.Move=func(c *FirstPersonController,m FirstPersonMotion)error{calls++;return c.ApplyMotion(m)};engine.TestTick();if calls!=2{t.Fatal("move override ordering")}
+ c.options.BeforeMove=func(c *FirstPersonController,m *FirstPersonMotion){c.SetEnabled(false)};calls=0;engine.TestTick();if calls!=0{t.Fatal("disabled during before-move still applied motion")}
+ c.SetEnabled(true);engine.TestDestroy(camera);if c.Enabled()||c.Body()!=nil||localFirstPerson!=nil{t.Fatal("camera destruction retained player")}
+}
+
+func TestLevelReleaseShutdownAndSteadyAllocations(t *testing.T){
+ c:=player(t,FirstPersonPhysics);engine.TestClose(engine.ComponentLevelReleased);if c.Enabled()||c.Body()!=nil||localFirstPerson!=nil{t.Fatal("level release retained ownership")}
+ c,err:=AttachFirstPerson(engine.Game{},engine.TestCamera(),withMode(FirstPersonFree));if err!=nil{t.Fatal(err)}
+ engine.TestTick(touch(1,engine.PointerDown,140,520),touch(2,engine.PointerDown,1140,520));engine.TestTick(touch(1,engine.PointerMove,140,400),touch(2,engine.PointerMove,1180,520))
+ c.Camera().SetSettings(engine.Camera3DSettings{ViewportWidth:1280,ViewportHeight:720})
+ if got:=testing.AllocsPerRun(30,func(){engine.TestTick()});got!=0{t.Fatalf("steady controller allocated: %v",got)}
+ engine.TestClose(engine.ComponentShutdown);if localFirstPerson!=nil||firstPersonTouchUsed{t.Fatal("shutdown retained controller/touch preference")}
+}
