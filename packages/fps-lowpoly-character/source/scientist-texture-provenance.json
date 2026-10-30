@@ -1,0 +1,12 @@
+{
+  "tool": "built-in image_gen.imagegen",
+  "source": "exec-70b645e1-9672-480c-a469-0d634ea25f44.png",
+  "reference": "Previously approved humanoid-roles-v2 concept; preserved in the local artwork history",
+  "masterSize": [1254, 1254],
+  "deliverySize": [512, 512],
+  "file": "source/scientist-head-v1.png",
+  "bytes": 319276,
+  "sha256": "68ba47cb1f0eb6f1c0f76013e0c77e08f5ba06ce646f3ef8bc76c93d496db87b",
+  "deliveryProcessing": "Area-average resize and PNG encoding only. Texture artwork authored by built-in imagegen.",
+  "promptFile": "source/scientist-texture-prompt.txt"
+}

@@ -68,7 +68,7 @@ func TestUnreleasedCatalog(t *testing.T) {
 			t.Fatal(entry.Source)
 		}
 	}
-	if !reflect.DeepEqual(names, []string{"controllers-3d", "controllers-isometric", "controllers-topdown", "dialogue", "fps-kit", "savegame", "tiled"}) {
+	if !reflect.DeepEqual(names, []string{"controllers-3d", "controllers-isometric", "controllers-topdown", "dialogue", "fps-kit", "fps-lowpoly-character", "savegame", "tiled"}) {
 		t.Fatal(names)
 	}
 	encoded, err := json.Marshal(master)

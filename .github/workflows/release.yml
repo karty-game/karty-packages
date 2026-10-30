@@ -14,6 +14,7 @@ on:
             controllers-topdown,
             dialogue,
             fps-kit,
+            fps-lowpoly-character,
             savegame,
             tiled,
           ]

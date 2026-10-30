@@ -4,15 +4,16 @@ Reusable code and assets for Karty games. Each folder contains a package
 manifest, source and its license. Code packages include standalone Go modules;
 resource-only packages need no Go dependency.
 
-| Package                                                  | Use it for                                                    |
-| -------------------------------------------------------- | ------------------------------------------------------------- |
-| [3D Controllers](controllers-3d/README.md)               | First-person movement, mouse look and touch controls          |
-| [Isometric Controllers](controllers-isometric/README.md) | Camera-relative movement, picking and camera framing          |
-| [Top-down Controllers](controllers-topdown/README.md)    | 2D movement, pointer targets and camera framing               |
-| [FPS Kit](fps-kit/README.md)                             | 256px materials, crates and placeholder decals                |
-| [Dialogue](dialogue/README.md)                           | Yarn Spinner compilation, story execution and visual novel UI |
-| [Savegame](savegame/README.md)                           | Separate profile data and saved run slots                     |
-| [Tiled](tiled/README.md)                                 | Orthogonal Tiled JSON maps, image importing and 2D sprites    |
+| Package                                                   | Use it for                                                    |
+| --------------------------------------------------------- | ------------------------------------------------------------- |
+| [3D Controllers](controllers-3d/README.md)                | First-person movement, mouse look and touch controls          |
+| [Isometric Controllers](controllers-isometric/README.md)  | Camera-relative movement, picking and camera framing          |
+| [Top-down Controllers](controllers-topdown/README.md)     | 2D movement, pointer targets and camera framing               |
+| [FPS Kit](fps-kit/README.md)                              | 256px materials, crates and placeholder decals                |
+| [FPS Low-poly Character](fps-lowpoly-character/README.md) | Four humanoid models, shared clips and animation selection    |
+| [Dialogue](dialogue/README.md)                            | Yarn Spinner compilation, story execution and visual novel UI |
+| [Savegame](savegame/README.md)                            | Separate profile data and saved run slots                     |
+| [Tiled](tiled/README.md)                                  | Orthogonal Tiled JSON maps, image importing and 2D sprites    |
 
 The three controller packages can be installed and released independently.
 [Migration from the combined package](controllers-v2.md) explains their module

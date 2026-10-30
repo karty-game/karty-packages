@@ -1,0 +1,231 @@
+{
+  "format_version": 1,
+  "source_sha256": "30b7d48fdee566fadff47a1cc4fdea1bc35eac30a1a05f784661fa28738f66e5",
+  "animation_bank": "animations/shared.glb",
+  "models": [
+    {
+      "role": "scientist",
+      "triangles": 1320,
+      "joints": 66,
+      "file": "models/scientist.glb"
+    },
+    {
+      "role": "guard",
+      "triangles": 1456,
+      "joints": 66,
+      "file": "models/guard.glb"
+    },
+    {
+      "role": "assault",
+      "triangles": 2181,
+      "source_triangles": 2182,
+      "joints": 66,
+      "file": "models/assault.glb"
+    },
+    {
+      "role": "policeman",
+      "triangles": 782,
+      "joints": 66,
+      "file": "models/policeman.glb"
+    }
+  ],
+  "clips": [
+    {
+      "id": "idle",
+      "clip": "Idle_A",
+      "seconds": 3.125,
+      "loop": true
+    },
+    {
+      "id": "walk",
+      "clip": "Walk",
+      "seconds": 1.6666666269302368,
+      "loop": true
+    },
+    {
+      "id": "run",
+      "clip": "Jog",
+      "seconds": 1.1666666269302368,
+      "loop": true
+    },
+    {
+      "id": "crouch",
+      "clip": "Crouch_Idle",
+      "seconds": 3.6666667461395264,
+      "loop": true
+    },
+    {
+      "id": "crouch-walk",
+      "clip": "Crouch_Walk",
+      "seconds": 2.5,
+      "loop": true
+    },
+    {
+      "id": "crawl",
+      "clip": "Crawl",
+      "seconds": 1.7083333730697632,
+      "loop": true
+    },
+    {
+      "id": "jump-start",
+      "clip": "Jump_Start",
+      "seconds": 1.6666666269302368,
+      "loop": false
+    },
+    {
+      "id": "jump-air",
+      "clip": "Jump_air",
+      "seconds": 3.125,
+      "loop": true
+    },
+    {
+      "id": "jump-land",
+      "clip": "Jump_Land",
+      "seconds": 1.5833333730697632,
+      "loop": false
+    },
+    {
+      "id": "strafe-left",
+      "clip": "Strafe_left",
+      "seconds": 1,
+      "loop": true
+    },
+    {
+      "id": "strafe-right",
+      "clip": "Strafe_right",
+      "seconds": 1,
+      "loop": true
+    },
+    {
+      "id": "aware",
+      "clip": "Confused",
+      "seconds": 2.9166667461395264,
+      "loop": false
+    },
+    {
+      "id": "use",
+      "clip": "Interact",
+      "seconds": 2.5,
+      "loop": false
+    },
+    {
+      "id": "pistol-idle",
+      "clip": "Pistol_Idle",
+      "seconds": 2.0833332538604736,
+      "loop": true
+    },
+    {
+      "id": "pistol-fire",
+      "clip": "Pistol_Shoot",
+      "seconds": 0.7916666865348816,
+      "loop": false
+    },
+    {
+      "id": "pistol-reload",
+      "clip": "Pistol_Reload",
+      "seconds": 2.0833332538604736,
+      "loop": false
+    },
+    {
+      "id": "talk",
+      "clip": "Sitting_Talking",
+      "seconds": 3.6666667461395264,
+      "loop": false
+    },
+    {
+      "id": "death-a",
+      "clip": "Death_A",
+      "seconds": 4.5,
+      "loop": false
+    },
+    {
+      "id": "death-c",
+      "clip": "Death_C",
+      "seconds": 2.2083332538604736,
+      "loop": false
+    },
+    {
+      "id": "death-d",
+      "clip": "Death_D",
+      "seconds": 2.1666667461395264,
+      "loop": false
+    }
+  ],
+  "files": [
+    {
+      "path": "models/assault.glb",
+      "bytes": 194444,
+      "sha256": "268aec88381605a80d9f825ffa347d54141232f86cc443609073816b5e6a54ed"
+    },
+    {
+      "path": "models/guard.glb",
+      "bytes": 138132,
+      "sha256": "873736b93a955d5bb6ed0676eb6b8b215db8218fd4eb8bd68d64afbfcaf68f07"
+    },
+    {
+      "path": "models/policeman.glb",
+      "bytes": 107920,
+      "sha256": "5eb8f45c4eaf4d6007a014f370ad04e768ed78aa5203fbd45fd9f873d65ec9fe"
+    },
+    {
+      "path": "models/scientist.glb",
+      "bytes": 146940,
+      "sha256": "2d0310db9d1f032778c595e34d734b7f0861448ae1a80107e7c1c27364be35f1"
+    },
+    {
+      "path": "animations/shared.glb",
+      "bytes": 246728,
+      "sha256": "2227c6a04d237220a72a2c28f1492fdf6da125320f5e0d0ef705b76527eee9dd"
+    },
+    {
+      "path": "source/assault.blend",
+      "bytes": 3558375,
+      "sha256": "23d747895a3180159b1f667c3ecda1459960e0356e9f9a24538d122a86cf9357"
+    },
+    {
+      "path": "source/guard-head-v1.png",
+      "bytes": 281945,
+      "sha256": "8c4a3155129b226bf46f584bd9e375ce529ea3246f13e7a8b66033fdfa929943"
+    },
+    {
+      "path": "source/guard-texture-prompt.txt",
+      "bytes": 1648,
+      "sha256": "bde42b9f8a8c13e9c2d98792c1d4252e5cd5c8936b3ea2e61413bd804fe1d7cb"
+    },
+    {
+      "path": "source/guard-texture-provenance.json",
+      "bytes": 574,
+      "sha256": "396b11e9d64a461a47262531ee52f6b0a1770854e92a1845627cc3894404d496"
+    },
+    {
+      "path": "source/guard.blend",
+      "bytes": 2993525,
+      "sha256": "499dd4b09db03fd0491b1bf04da5de3feac47c1bc9a7d54a5db14ba4062e3e27"
+    },
+    {
+      "path": "source/policeman-original.glb",
+      "bytes": 1617876,
+      "sha256": "30b7d48fdee566fadff47a1cc4fdea1bc35eac30a1a05f784661fa28738f66e5"
+    },
+    {
+      "path": "source/scientist-head-v1.png",
+      "bytes": 319276,
+      "sha256": "68ba47cb1f0eb6f1c0f76013e0c77e08f5ba06ce646f3ef8bc76c93d496db87b"
+    },
+    {
+      "path": "source/scientist-texture-prompt.txt",
+      "bytes": 1517,
+      "sha256": "9ad315b85da126d0f2839d7d451410d864a987451403d8b4121768919260d6f2"
+    },
+    {
+      "path": "source/scientist-texture-provenance.json",
+      "bytes": 582,
+      "sha256": "7f414f939a3f94912ae675dfaf6e15177bd2fab878fad967e70765b519845a1f"
+    },
+    {
+      "path": "source/scientist.blend",
+      "bytes": 3126188,
+      "sha256": "86fa68a9bf1ccfe9029485d6f19d5c2a35234b27c8568a0b865da6bd0942589f"
+    }
+  ]
+}

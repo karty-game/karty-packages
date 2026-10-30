@@ -1,0 +1,12 @@
+{
+  "tool": "built-in image_gen.imagegen",
+  "source": "exec-c68503fe-3362-456d-b1c3-79418df55176.png",
+  "reference": "Previously approved humanoid-roles-v2 concept; preserved in the local artwork history",
+  "masterSize": [1254, 1254],
+  "deliverySize": [512, 512],
+  "file": "source/guard-head-v1.png",
+  "bytes": 281945,
+  "sha256": "8c4a3155129b226bf46f584bd9e375ce529ea3246f13e7a8b66033fdfa929943",
+  "deliveryProcessing": "Area-average resize and PNG encoding only. Texture artwork authored by built-in imagegen.",
+  "promptFile": "source/guard-texture-prompt.txt"
+}

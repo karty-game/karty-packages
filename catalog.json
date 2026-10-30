@@ -42,6 +42,14 @@
       "preview": "packages/fps-kit/screenshots/materials.png"
     },
     {
+      "name": "fps-lowpoly-character",
+      "description": "Four low-poly humanoids, 20 shared animations and a Go animation controller for FPS characters and NPCs.",
+      "tags": ["3d", "animation", "characters", "fps", "npc"],
+      "readme": "packages/fps-lowpoly-character/README.md",
+      "source": "packages/fps-lowpoly-character",
+      "preview": "packages/fps-lowpoly-character/previews/cast.png"
+    },
+    {
       "name": "savegame",
       "description": "Independent profile storage and saved run slots for portable Go games.",
       "tags": ["persistence", "profiles", "savegame"],
